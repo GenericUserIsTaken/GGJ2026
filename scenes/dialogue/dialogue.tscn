@@ -1,0 +1,97 @@
+[gd_scene format=3 uid="uid://b5p27gwba51x"]
+
+[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="1_cpw6a"]
+
+[node name="Dialogue" type="Control" unique_id=2018963143]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=469345931]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.6
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="OptionsGrid" type="GridContainer" parent="PanelContainer" unique_id=669535393]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 2
+
+[node name="Control" type="Control" parent="PanelContainer/OptionsGrid" unique_id=1243886526]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/OptionsGrid/Control" unique_id=824218943]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_cpw6a")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="PanelContainer/OptionsGrid" unique_id=2125805048]
+layout_mode = 2
+text = "A really long option"
+
+[node name="Control2" type="Control" parent="PanelContainer/OptionsGrid" unique_id=2108425325]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/OptionsGrid/Control2" unique_id=860918492]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_cpw6a")
+expand_mode = 1
+
+[node name="Label2" type="Label" parent="PanelContainer/OptionsGrid" unique_id=2137138472]
+layout_mode = 2
+text = "A really long option"
+
+[node name="Control3" type="Control" parent="PanelContainer/OptionsGrid" unique_id=711440045]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/OptionsGrid/Control3" unique_id=973204475]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_cpw6a")
+expand_mode = 1
+
+[node name="Label3" type="Label" parent="PanelContainer/OptionsGrid" unique_id=277577797]
+layout_mode = 2
+text = "A really long option"
+
+[node name="Control4" type="Control" parent="PanelContainer/OptionsGrid" unique_id=470979506]
+custom_minimum_size = Vector2(26, 26)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="PanelContainer/OptionsGrid/Control4" unique_id=1920660767]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_cpw6a")
+expand_mode = 1
+
+[node name="Label4" type="Label" parent="PanelContainer/OptionsGrid" unique_id=227649497]
+layout_mode = 2
+text = "A really long option"
