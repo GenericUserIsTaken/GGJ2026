@@ -64,7 +64,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			var option := displayed_options[selected_option]
 			dialogue_advanced.emit(option)
-			show_text("— %s" % option.option_title)
+			show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
 			await _animate_options_container_out()
 			_show_dialogue_func(option.option_callback)
 	elif event.is_action_pressed("ui_cancel"):
@@ -180,7 +180,7 @@ var _active_scroll_tween: Tween = null
 ## This does animate the text and scroll.
 func show_text(text: String) -> void:
 	var dialogue := DialogueTranscript.new()
-	dialogue.label.append_text(text)
+	dialogue.label.append_text("[dialogue_text start_time=\"%s\"]%s[/dialogue_text]" % [Time.get_ticks_msec(), text])
 	dialogue.label.fit_content = true
 	dialogue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_transcript.add_child(dialogue)
@@ -242,17 +242,20 @@ class DialogueTranscript extends Container:
 			queue_sort()
 
 	func _init() -> void:
+		label.install_effect(preload("dialogue_response_rich_text_effect.gd").new())
+		label.install_effect(preload("dialogue_text_rich_text_effect.gd").new())
 		label.minimum_size_changed.connect(update_minimum_size)
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		add_child(label)
 
 	func _ready() -> void:
-		modulate.a = 0.0
-		x_offset = 0.0
-		var tween := create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(self, "x_offset", 10.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+		pass
+		#modulate.a = 0.0
+		#x_offset = 0.0
+		#var tween := create_tween()
+		#tween.set_parallel(true)
+		#tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		#tween.tween_property(self, "x_offset", 10.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 
 	func _get_minimum_size() -> Vector2:
 		return label.get_combined_minimum_size()
