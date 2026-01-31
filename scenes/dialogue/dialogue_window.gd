@@ -3,15 +3,18 @@ extends Control
 
 signal dialogue_started
 signal dialogue_options_shown
-signal dialogue_advanced
+signal dialogue_advanced(option_picked: DialogueOption)
 signal dialogue_ended
 
 signal selected_option_changed(new_selected_option: int)
 
 
-@onready var _options_container: Container = %OptionsGrid
+@onready var _options_outer_container: PanelContainer = %OptionsOuterContainer
+@onready var _options_container: PanelContainer = %OptionsContainer
+@onready var _options_vbox: Container = %OptionsGrid
 @onready var _transcript: VBoxContainer = %Transcript
 @onready var _transcript_scroll_container: ScrollContainer = %TranscriptScrollContainer
+@onready var _left_side_container: VBoxContainer = %LeftSideContainer
 
 
 var selected_option: int:
@@ -43,23 +46,29 @@ func _ready() -> void:
 	)
 	await get_parent().ready
 	_fix_tree_order()
+	_options_container.modulate.a = 0.0
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dialogue_running:
 		pass
-	elif event.is_action("ui_down") and event.is_pressed() and selected_option < displayed_options.size() - 1:
+	elif event.is_action_pressed("ui_down", true) and selected_option < displayed_options.size() - 1:
 		selected_option += 1
-	elif event.is_action("ui_up") and event.is_pressed() and selected_option > 0:
+	elif event.is_action_pressed("ui_up", true) and selected_option > 0:
 		selected_option -= 1
-	elif event.is_action("ui_accept") and event.is_pressed():
+	elif event.is_action_pressed("ui_accept", true):
 		if displayed_options.is_empty():
 			dialogue_ended.emit()
 			active_dialog = null
 			_animate_out()
 		else:
-			dialogue_advanced.emit()
-			_show_dialogue_func(displayed_options[selected_option].option_callback)
+			var option := displayed_options[selected_option]
+			dialogue_advanced.emit(option)
+			show_text("— %s" % option.option_title)
+			await _animate_options_container_out()
+			_show_dialogue_func(option.option_callback)
+	elif event.is_action_pressed("ui_cancel"):
+		_animate_options_container_out()
 
 ## Show a [Dialogue] option.
 ## [br]
@@ -74,7 +83,7 @@ func show_dialogue(dialogue: Dialogue) -> void:
 
 ## Clear the _transcript view.
 ## This doesn't do any sort of animation.
-func clear__transcript() -> void:
+func clear_transcript() -> void:
 	for child in _transcript.get_children():
 		child.queue_free()
 
@@ -96,8 +105,52 @@ func _animate_out() -> void:
 	_active_tween.tween_callback(hide)
 
 
+var _options_container_tween: Tween = null
+
+
+func _animate_options_container_in() -> void:
+	#await get_tree().process_frame
+	#var height := get_viewport_rect().size.y - _options_container.global_position.y
+	#_options_container.position.y = height
+	#print(_options_container.position.y)
+
+	if _options_container_tween:
+		_options_container_tween.kill()
+	_options_container_tween = create_tween()
+	_options_container_tween.set_parallel()
+	#_options_container_tween.tween_method(func(value: float):
+		#_options_container.position.y = lerpf(height, 0.0, value),
+		#0.0, 1.0, 0.75
+	#).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_outer_container.size_flags_stretch_ratio = 0.0
+	_left_side_container.size_flags_stretch_ratio = 1.5
+	_options_container.modulate.a = 0.0
+	_options_vbox.pivot_offset_ratio = Vector2(0.5, 0.5)
+	_options_vbox.scale = Vector2.ZERO
+	_options_outer_container.show()
+	_options_container_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.tween_property(_options_container, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_options_container_tween.tween_property(_options_vbox, "scale", Vector2.ONE, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	await _options_container_tween.finished
+
+
+func _animate_options_container_out() -> void:
+	if _options_container_tween:
+		_options_container_tween.kill()
+	_options_container_tween = create_tween()
+	_options_container_tween.set_parallel()
+	#_options_container_tween.tween_property(_options_container, "position:y", get_viewport_rect().size.y - _options_container.global_position.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.tween_property(_options_container, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_options_container_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_options_container_tween.chain().tween_callback(_options_outer_container.hide)
+	await _options_container_tween.finished
+
+
 func _show_dialogue_func(dialogue: Callable) -> void:
-	for child in _options_container.get_children():
+	for child in _options_vbox.get_children():
 		child.queue_free()
 	_option_widgets.clear()
 	displayed_options.clear()
@@ -107,17 +160,18 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 	var options: Array[DialogueOption] = await dialogue.call()
 	is_dialogue_running = false
 	displayed_options = options
-
 	var i := 0
 	for option in options:
 		var widget := DialogueOptionWidget.new(option.option_title)
-		_options_container.add_child(widget)
+		_options_vbox.add_child(widget)
 		widget.hovered.connect(func(): selected_option = i)
 		widget.clicked.connect(_show_dialogue_func.bind(option.option_callback))
 		_option_widgets.append(widget)
 		i += 1
 	selected_option = 0
 	dialogue_options_shown.emit()
+	if not displayed_options.is_empty():
+		await _animate_options_container_in()
 
 
 var _active_scroll_tween: Tween = null
