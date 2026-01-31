@@ -11,8 +11,17 @@ config_version=5
 [application]
 
 config/name="maskjam"
+run/main_scene="uid://dwds2fsmhe00s"
 config/features=PackedStringArray("4.6", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+DialogueWindow="*uid://b5p27gwba51x"
+
+[gui]
+
+theme/custom="uid://b4soaa4xy6ot7"
 
 [physics]
 

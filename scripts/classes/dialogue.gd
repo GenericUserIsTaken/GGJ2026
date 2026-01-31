@@ -1,6 +1,9 @@
 @abstract class_name Dialogue extends Node
 
 
+const DialogueWindow = preload("uid://cyhfyn2ceuyef")
+
+
 var _dialogue_window: DialogueWindow
 
 
