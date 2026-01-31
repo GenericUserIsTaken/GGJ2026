@@ -1,14 +1,15 @@
-[gd_scene format=3 uid="uid://b7daytirgj07i"]
+[gd_scene format=3 uid="uid://b5p27gwba51x"]
 
-[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="1_riuec"]
+[ext_resource type="Script" uid="uid://cyhfyn2ceuyef" path="res://scenes/dialogue/dialogue_window.gd" id="1_s4muj"]
 
-[node name="Dialogue" type="Control" unique_id=2018963143]
+[node name="DialogueWindow" type="Control" unique_id=2018963143]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_s4muj")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=556090801]
 layout_mode = 1
@@ -25,79 +26,9 @@ size_flags_horizontal = 3
 [node name="OptionsGrid" type="GridContainer" parent="HBoxContainer/PanelContainer" unique_id=669535393]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 columns = 2
-
-[node name="Control" type="Control" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=1243886526]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer/OptionsGrid/Control" unique_id=824218943]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_riuec")
-expand_mode = 1
-
-[node name="Label" type="Label" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=2125805048]
-layout_mode = 2
-text = "A really long option"
-
-[node name="Control2" type="Control" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=2108425325]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer/OptionsGrid/Control2" unique_id=860918492]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_riuec")
-expand_mode = 1
-
-[node name="Label2" type="Label" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=2137138472]
-layout_mode = 2
-text = "A really long option"
-
-[node name="Control3" type="Control" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=711440045]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer/OptionsGrid/Control3" unique_id=973204475]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_riuec")
-expand_mode = 1
-
-[node name="Label3" type="Label" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=277577797]
-layout_mode = 2
-text = "A really long option"
-
-[node name="Control4" type="Control" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=470979506]
-custom_minimum_size = Vector2(26, 26)
-layout_mode = 2
-
-[node name="TextureRect" type="TextureRect" parent="HBoxContainer/PanelContainer/OptionsGrid/Control4" unique_id=1920660767]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("1_riuec")
-expand_mode = 1
-
-[node name="Label4" type="Label" parent="HBoxContainer/PanelContainer/OptionsGrid" unique_id=227649497]
-layout_mode = 2
-text = "A really long option"
 
 [node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer" unique_id=237788116]
 layout_mode = 2

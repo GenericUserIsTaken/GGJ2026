@@ -1,4 +1,11 @@
-@abstract class_name Dialogue
+@abstract class_name Dialogue extends Node
 
 
-@abstract func dialogue()
+var _dialogue_window: DialogueWindow
+
+
+@abstract func dialogue() -> Array[DialogueOption]
+
+
+func show(text: String):
+	await _dialogue_window.show_text(text)
