@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b5p27gwba51x"]
 
-[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="1_cpw6a"]
+[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="1_riuec"]
 
 [node name="Dialogue" type="Control" unique_id=2018963143]
 layout_mode = 3
@@ -35,7 +35,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_cpw6a")
+texture = ExtResource("1_riuec")
 expand_mode = 1
 
 [node name="Label" type="Label" parent="PanelContainer/OptionsGrid" unique_id=2125805048]
@@ -53,7 +53,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_cpw6a")
+texture = ExtResource("1_riuec")
 expand_mode = 1
 
 [node name="Label2" type="Label" parent="PanelContainer/OptionsGrid" unique_id=2137138472]
@@ -71,7 +71,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_cpw6a")
+texture = ExtResource("1_riuec")
 expand_mode = 1
 
 [node name="Label3" type="Label" parent="PanelContainer/OptionsGrid" unique_id=277577797]
@@ -89,7 +89,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_cpw6a")
+texture = ExtResource("1_riuec")
 expand_mode = 1
 
 [node name="Label4" type="Label" parent="PanelContainer/OptionsGrid" unique_id=227649497]
