@@ -2,15 +2,16 @@ extends Control
 
 
 signal dialogue_started
+signal dialogue_options_shown
 signal dialogue_advanced
 signal dialogue_ended
 
 signal selected_option_changed(new_selected_option: int)
 
 
-@onready var options_container: Container = %OptionsGrid
-@onready var transcript: VBoxContainer = %Transcript
-@onready var transcript_scroll_container: ScrollContainer = %TranscriptScrollContainer
+@onready var _options_container: Container = %OptionsGrid
+@onready var _transcript: VBoxContainer = %Transcript
+@onready var _transcript_scroll_container: ScrollContainer = %TranscriptScrollContainer
 
 
 var selected_option: int:
@@ -18,10 +19,13 @@ var selected_option: int:
 		selected_option = value
 		selected_option_changed.emit(value)
 var displayed_options: Array[DialogueOption]
-var option_widgets: Array[DialogueOptionWidget]
 var active_dialog: Dialogue = null
+var _option_widgets: Array[DialogueOptionWidget]
 
-var active_tween: Tween = null
+## Whether new dialogue is actively being shown.
+var is_dialogue_running: bool = false
+
+var _active_tween: Tween = null
 
 
 func _fix_tree_order() -> void:
@@ -33,7 +37,7 @@ func _ready() -> void:
 	selected_option_changed.connect(
 		func(selected: int):
 			var i := 0
-			for option in option_widgets:
+			for option in _option_widgets:
 				option.set_selected(selected == i)
 				i += 1
 	)
@@ -42,7 +46,9 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action("ui_down") and event.is_pressed() and selected_option < displayed_options.size() - 1:
+	if is_dialogue_running:
+		pass
+	elif event.is_action("ui_down") and event.is_pressed() and selected_option < displayed_options.size() - 1:
 		selected_option += 1
 	elif event.is_action("ui_up") and event.is_pressed() and selected_option > 0:
 		selected_option -= 1
@@ -55,7 +61,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			dialogue_advanced.emit()
 			_show_dialogue_func(displayed_options[selected_option].option_callback)
 
-
+## Show a [Dialogue] option.
+## [br]
+## This handles animating the visibility of the dialogue overlay, then starts at [param dialogue]'s [method Dialogue.dialogue] entry point.
+## A set of options is then shown to the user once it finishes, allowing the user to choose between which of the next dialogues to show.
 func show_dialogue(dialogue: Dialogue) -> void:
 	dialogue._dialogue_window = self
 	active_dialog = dialogue
@@ -63,68 +72,70 @@ func show_dialogue(dialogue: Dialogue) -> void:
 	dialogue_started.emit()
 	_show_dialogue_func(dialogue.dialogue)
 
-
-func clear_transcript() -> void:
-	for child in transcript.get_children():
+## Clear the _transcript view.
+## This doesn't do any sort of animation.
+func clear__transcript() -> void:
+	for child in _transcript.get_children():
 		child.queue_free()
 
 
 func _animate_in() -> void:
-	if active_tween:
-		active_tween.kill()
-	active_tween = create_tween()
+	if _active_tween:
+		_active_tween.kill()
+	_active_tween = create_tween()
 	show()
 	modulate.a = 0.0
-	active_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	_active_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 
 
 func _animate_out() -> void:
-	if active_tween:
-		active_tween.kill()
-	active_tween = create_tween()
-	active_tween.tween_property(self, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	active_tween.tween_callback(hide)
+	if _active_tween:
+		_active_tween.kill()
+	_active_tween = create_tween()
+	_active_tween.tween_property(self, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_active_tween.tween_callback(hide)
 
 
 func _show_dialogue_func(dialogue: Callable) -> void:
-	for child in options_container.get_children():
+	for child in _options_container.get_children():
 		child.queue_free()
-	option_widgets.clear()
+	_option_widgets.clear()
+	displayed_options.clear()
 	selected_option = 0
 
+	is_dialogue_running = true
 	var options: Array[DialogueOption] = await dialogue.call()
+	is_dialogue_running = false
 	displayed_options = options
 
 	var i := 0
 	for option in options:
 		var widget := DialogueOptionWidget.new(option.option_title)
-		options_container.add_child(widget)
+		_options_container.add_child(widget)
 		widget.hovered.connect(func(): selected_option = i)
 		widget.clicked.connect(_show_dialogue_func.bind(option.option_callback))
-		option_widgets.append(widget)
+		_option_widgets.append(widget)
 		i += 1
 	selected_option = 0
+	dialogue_options_shown.emit()
 
 
-var active_scroll_tween: Tween = null
+var _active_scroll_tween: Tween = null
 
-
+## Show a piece of text in the transcript.
+## This does animate the text and scroll.
 func show_text(text: String) -> void:
 	var dialogue := DialogueTranscript.new()
 	dialogue.label.append_text(text)
 	dialogue.label.fit_content = true
 	dialogue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	transcript.add_child(dialogue)
-	#transcript.push_paragraph(HORIZONTAL_ALIGNMENT_LEFT)
-	#transcript.append_text(text)
-	#transcript.pop()
-	#transcript.scroll_to_line(transcript.get_line_count() - 1)
+	_transcript.add_child(dialogue)
 	get_tree().process_frame.connect(
 		func():
-			if active_scroll_tween:
-				active_scroll_tween.kill()
-			active_scroll_tween = create_tween()
-			active_scroll_tween.tween_property(transcript_scroll_container, "scroll_vertical", transcript.size.y - transcript_scroll_container.size.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO),
+			if _active_scroll_tween:
+				_active_scroll_tween.kill()
+			_active_scroll_tween = create_tween()
+			_active_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO),
 		CONNECT_ONE_SHOT
 	)
 	await get_tree().create_timer(1.0).timeout
@@ -150,10 +161,7 @@ class DialogueOptionWidget extends HBoxContainer:
 		text = _text
 
 	func _ready() -> void:
-		#var icon_wrapper := Control.new()
 		icon.texture = ICON
-		#icon_wrapper.custom_minimum_size = Vector2(26, 26)
-		#icon_wrapper.add_child(icon)
 		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		add_child(icon)
 		var label := Label.new()

@@ -17,4 +17,8 @@ corner_radius_bottom_left = 16
 
 [resource]
 default_font_size = 45
+HBoxContainer/constants/separation = 16
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_64js0")
+TranscriptVBoxContainer/base_type = &"VBoxContainer"
+TranscriptVBoxContainer/constants/separation = 0
+VBoxContainer/constants/separation = 16
