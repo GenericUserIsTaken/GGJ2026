@@ -1,0 +1,9 @@
+description=
+icon=icon.svg
+name=maskjam
+tags=
+
+[version]
+isMono=false
+repo=/godotengine/godot-builds
+tagName=4.6-stable
