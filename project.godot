@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 DialogueWindow="*uid://b5p27gwba51x"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [gui]
 
 theme/custom="uid://b4soaa4xy6ot7"

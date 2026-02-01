@@ -1,4 +1,4 @@
-extends Node3D
+class_name RhythmNode extends Node3D
 '''
 bpm: 140 (4/4 time)
 104 measures of song (2:58.3) + about 2 measures of a crash cymbal at the end
@@ -25,32 +25,86 @@ const _subdivision_length : float = 30.0/_bpm
 @onready var music_player : AudioStreamPlayer= self.get_node("MaskSongDemo")
 @export var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
-@export var _margin := 0.8
+@export var _margin := 0.08
 
+@export var last_subbeat := 0
+@export var next_subbeat := _subdivision_length
+@export var active_subbeat := -1
+@export var active_subbeat_start := next_subbeat - _margin
+@export var active_subbeat_end := next_subbeat + _margin
 
+#region calc methods for conversion between songtime and measures/subbeats
+static func calc_measure(song_time) -> int:
+	return 1 + floori((song_time/_measure_length))
+	
+static func calc_subbeat(song_time) -> int:
+	var left :float = fmod(song_time,_measure_length)
+	#print(left," : ",left/_subdivision_length, " : ",_subdivision_length)
+	return floori(left/_subdivision_length) #have to floor to convert into int
+	
+static func calc_songtime(measure,subbeat) -> float:
+	return (measure-1)*((8.0*30.0)/_bpm) + subbeat*(30.0/_bpm)
+#endregion
 
 func _ready() -> void:
 	music_player.play()
-	var calctime := calc_songtime(36,4)
-	#print(calctime, " : ",calc_measure(calctime)," : ",calc_subbeat(calctime))
+	var data = load_data_from_file("res://timedata.txt")
+	for row in data:
+		print(row)
+
 
 func _process(delta: float) -> void:
-		_song_time = music_player.get_playback_position()
+		_song_time = music_player.get_playback_position() + AudioServer.get_time_since_last_mix()
+		if active_subbeat == -1 and _song_time >= active_subbeat_start:
+			active_subbeat = last_subbeat+1
+			print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
+			$Sprite3D.visible = true
+			#emit entered signal
+		if active_subbeat != -1 and _song_time > active_subbeat_end:
+			active_subbeat = -1
+			#emit left signal
+			active_subbeat_start = next_subbeat - _margin
+			print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+			active_subbeat_end = next_subbeat + _margin
+			$Sprite3D.visible = false
+			$Sprite3D2.visible = false
+		if _song_time >= next_subbeat:
+			last_subbeat += 1
+			print("MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
+			$Sprite3D2.visible = true
+			#emit beat number
+			next_subbeat += _subdivision_length
+			#| | |
+			#| |x|
+		
 		
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.pressed and event.keycode == KEY_F:
-			var newTime = HitTime.new(_song_time,calc_measure(_song_time),calc_subbeat(_song_time),HitTime.HitType.BEATA)
+			var newTime = HitTime.new(calc_measure(_song_time), calc_subbeat(_song_time), HitTime.HitType.BEATF, _song_time)
 			_timings.append(newTime)
 			print(newTime)
 			
-func calc_measure(song_time) -> int:
-	return 1 + (song_time/_measure_length)
-	
-func calc_subbeat(song_time) -> int:
-	var left :float = fmod(song_time,_measure_length)
-	#print(left," : ",left/_subdivision_length, " : ",_subdivision_length)
-	return left/_subdivision_length 
-	
-func calc_songtime(measure,subbeat) -> float:
-	return (measure-1)*((8.0*30.0)/_bpm) + subbeat*(30.0/_bpm)
+func load_data_from_file(path: String) -> Array:
+	var result: Array = []
+	var lookup: Array = [HitTime.HitType.BEATF,HitTime.HitType.BEATJ]
+
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("Failed to open file: " + path)
+		return result
+
+	while file.get_position() < file.get_length():
+		var line := file.get_line().strip_edges()
+
+		if line.is_empty():
+			continue
+
+		var parts := line.split(" ", false)
+		if parts.size() >= 3:
+			var a = int(parts[0])
+			var b = int(parts[1])
+			var c = int(parts[2])
+			result.append(HitTime.new(a, b, lookup[c-1]))
+
+	return result
