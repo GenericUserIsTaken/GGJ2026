@@ -125,6 +125,7 @@ func show_dialogue(dialogue: Dialogue) -> void:
 	if _tween.is_running():
 		await _tween.finished
 	dialogue._dialogue_window = self
+	dialogue.dialogue_setup()
 	active_dialog = dialogue
 	_animate(OptionsState.OPTIONS_HIDDEN)
 	dialogue_started.emit()
@@ -232,7 +233,7 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 		i += 1
 	selected_option = _is_any_option_available()
 	dialogue_options_shown.emit()
-	if selected_option == -1 or displayed_options.size() == 1:
+	if selected_option == -1 or (displayed_options.size() == 1 and displayed_options[0].hide_if_last_option):
 		_continue_indicator.animate_in()
 	else:
 		await _animate(OptionsState.OPTIONS_SHOWN)
@@ -374,6 +375,7 @@ class DialogueTranscript extends Container:
 	func _init() -> void:
 		label.install_effect(preload("dialogue_response_rich_text_effect.gd").new())
 		label.install_effect(preload("dialogue_text_rich_text_effect.gd").new())
+		label.install_effect(preload("emph_rich_text_effect.gd").new())
 		label.minimum_size_changed.connect(update_minimum_size)
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		add_child(label)
