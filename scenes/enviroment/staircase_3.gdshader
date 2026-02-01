@@ -6,6 +6,8 @@ uniform vec4 left_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform vec4 right_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform vec4 front_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform vec4 back_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform float shadow_intensity : hint_range(0.0, 1.0) = 0.2;
+uniform sampler2D shadow_gradient;
 varying vec3 world_normal;
 
 // Vertex Shader
@@ -25,6 +27,8 @@ void fragment() {
 	
 	
 	ALBEDO = y_axis_color+x_axis_color+z_axis_color;
+	//ALBEDO *= UV2.xxx * shadow_intensity + 1.0 - shadow_intensity;
+	ALBEDO *= texture(shadow_gradient, vec2(UV2.x, 0.0)).rgb;
 }   
 
 //void light() {

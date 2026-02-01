@@ -2,6 +2,14 @@
 
 [ext_resource type="Shader" uid="uid://b7xfjxmygwb6" path="res://scenes/enviroment/staircase_3.gdshader" id="1_7uxna"]
 
+[sub_resource type="Gradient" id="Gradient_7uxna"]
+interpolation_mode = 2
+offsets = PackedFloat32Array(0.07627136, 0.45426652)
+colors = PackedColorArray(0.8568573, 0.8568573, 0.8568573, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_7qyf0"]
+gradient = SubResource("Gradient_7uxna")
+
 [resource]
 render_priority = 0
 shader = ExtResource("1_7uxna")
@@ -11,3 +19,5 @@ shader_parameter/left_color = Color(0.3019608, 0.3019608, 0.3019608, 1)
 shader_parameter/right_color = Color(1, 1, 0, 1)
 shader_parameter/front_color = Color(0.8699952, 0.5188031, 0.3486244, 1)
 shader_parameter/back_color = Color(0.8556818, 0.7813481, 0.79034287, 1)
+shader_parameter/shadow_intensity = 0.06800000323
+shader_parameter/shadow_gradient = SubResource("GradientTexture1D_7qyf0")

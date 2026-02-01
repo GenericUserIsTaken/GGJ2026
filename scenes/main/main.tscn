@@ -25,5 +25,5 @@ visible = false
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.330322, -11, 4.9164314)
 visible = false
 
-[node name="staircase5" parent="." unique_id=1060359476 instance=ExtResource("3_k2fmo")]
+[node name="staircase5" parent="." unique_id=425390490 instance=ExtResource("3_k2fmo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.330322, -11, 4.9164314)
