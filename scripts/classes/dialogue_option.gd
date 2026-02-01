@@ -7,6 +7,7 @@ class_name DialogueOption
 var option_title: String
 ## [code]func(): Array[DialogueOption][/code]
 var option_callback: Callable
+var disabled: bool = false
 
 
 func _init(
@@ -15,3 +16,7 @@ func _init(
 ) -> void:
 	option_title = _option_title
 	option_callback = _option_callback
+
+
+func disable() -> void:
+	disabled = true

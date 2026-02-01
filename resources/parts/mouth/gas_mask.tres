@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="MaskPart" format=3 uid="uid://yxbhradjtev8"]
+
+[ext_resource type="Script" uid="uid://db0y2pir0kaa1" path="res://scripts/resources/mask_part.gd" id="1_j45m7"]
+[ext_resource type="Script" uid="uid://ced22pm6wju3" path="res://scripts/resources/mask_stats.gd" id="2_2xiqp"]
+[ext_resource type="Texture2D" uid="uid://brx3duehox6ah" path="res://assets/textures/parts/mouth/GasMask.png" id="3_j45m7"]
+
+[sub_resource type="Resource" id="Resource_r2jjl"]
+script = ExtResource("2_2xiqp")
+loyalty = 3.0
+mental = -2.0
+emotional = 3.0
+physical = 2.0
+metadata/_custom_type_script = "uid://ced22pm6wju3"
+
+[resource]
+script = ExtResource("1_j45m7")
+type = 3
+texture = ExtResource("3_j45m7")
+stats = SubResource("Resource_r2jjl")
+name = "Gas mask"
+id = "mouth/gas_mask"
+metadata/_custom_type_script = "uid://db0y2pir0kaa1"

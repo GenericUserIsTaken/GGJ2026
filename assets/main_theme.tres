@@ -87,7 +87,7 @@ expand_margin_right = 4.0
 expand_margin_bottom = 4.0
 
 [resource]
-default_font_size = 36
+default_font_size = 32
 EmptyMarginPanelContainer/base_type = &"PanelContainer"
 EmptyMarginPanelContainer/styles/panel = SubResource("StyleBoxEmpty_xgdp2")
 EmptyPanelContainer/base_type = &"PanelContainer"
@@ -95,9 +95,13 @@ EmptyPanelContainer/styles/panel = SubResource("StyleBoxEmpty_64js0")
 GridContainer/constants/h_separation = 16
 GridContainer/constants/v_separation = 16
 HBoxContainer/constants/separation = 16
+MarginContainer/constants/margin_bottom = 16
+MarginContainer/constants/margin_left = 16
+MarginContainer/constants/margin_right = 16
+MarginContainer/constants/margin_top = 16
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_64js0")
 SmallLabel/base_type = &"Label"
-SmallLabel/font_sizes/font_size = 24
+SmallLabel/font_sizes/font_size = 16
 StatsBar/styles/fill = SubResource("StyleBoxFlat_0arac")
 StatsBar/styles/negative_fill = SubResource("StyleBoxFlat_611f8")
 StatsBar/styles/negative_placeholder_fill = SubResource("StyleBoxFlat_pefyd")

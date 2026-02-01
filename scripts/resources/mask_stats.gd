@@ -5,3 +5,6 @@ class_name MaskStats extends Resource
 @export var mental: float = 0.0
 @export var emotional: float = 0.0
 @export var physical: float = 0.0
+
+
+static func stats() -> PackedStringArray: return ["loyalty", "mental", "emotional", "physical"]

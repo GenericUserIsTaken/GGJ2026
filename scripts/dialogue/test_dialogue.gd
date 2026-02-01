@@ -1,59 +1,24 @@
 extends Dialogue
 
 
-const NO_MONEY_YET = -1
-const THEY_HATE_ME = -2
-
-
-static var money_give: int = NO_MONEY_YET
+var tl_options: Array[DialogueOption] = [
+	DialogueOption.new("Option 0", _option_n.bind(0)),
+	DialogueOption.new("Option 1", _option_n.bind(1)),
+	DialogueOption.new("Option 2", _option_n.bind(2)),
+	DialogueOption.new("Option 3", _option_n.bind(3)),
+]
 
 
 func dialogue() -> Array[DialogueOption]:
-	if money_give > 0:
-		await show("Thank you for the $%s" % money_give)
-		return []
-	elif money_give == THEY_HATE_ME:
-		await show("I still hate you, by the way")
-		await show("Just thought I'd throw that in")
-		return [
-			DialogueOption.new("Continue hating me", _option_still_hate_me),
-			DialogueOption.new("Fine, I'll give you $300", _option_money.bind(300)),
-		]
-	else:
-		await show("I am in a bit of a pickle")
-		await show("Would you be able to help me?")
-		return [
-			DialogueOption.new("Yes", _option_yes),
-			DialogueOption.new("No", _option_no),
-		]
+	await show("I am in a bit of a pickle")
+	await show("I am in a bit of a pickle")
+	await show("I am in a bit of a pickle")
+	await show("I am in a bit of a pickle")
+	await show("I am in a bit of a pickle")
+	return tl_options
 
 
-func _option_yes() -> Array[DialogueOption]:
-	await show("Thank you so much!")
-	await show("How much money do you want to give me?")
-	var options: Array[DialogueOption]
-	for i in 3:
-		var money = (i + 1) * 100
-		options.append(DialogueOption.new("$%s" % money, _option_money.bind(money)))
-	return options
-
-
-func _option_no() -> Array[DialogueOption]:
-	money_give = THEY_HATE_ME
-	await show("I HATE YOU AND I HOPE YOU [b][color=red]DIE[/color][/b]")
-	return []
-
-
-func _option_money(money_value: int) -> Array[DialogueOption]:
-	money_give = money_value
-	await show("Thanks for the $%s" % money_value)
-	return []
-
-
-func _option_still_hate_me() -> Array[DialogueOption]:
-	await show("And I hate you too.")
-	return []
-
-
-func dialogue_end() -> void:
-	await _dialogue_window.show_mask_config()
+func _option_n(n: int) -> Array[DialogueOption]:
+	tl_options[n].disable()
+	await show("You picked %s" % n)
+	return [DialogueOption.new("Go back", dialogue)]

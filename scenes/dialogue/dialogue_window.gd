@@ -27,14 +27,22 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _center_spacer_control: Control = %CenterSpacerControl
 @onready var _left_top_spacer_control: Control = %LeftTopSpacerControl
 @onready var _transcript_container: PanelContainer = %TranscriptContainer
-@onready var _continue_indicator: Control = %ContinueIndicator
+@onready var _continue_indicator: ContinueIndicator = %ContinueIndicator
 @onready var _mask_vbox: VBoxContainer = %MaskGrid
+@onready var _stats_display_container: Control = %StatsDisplayContainer
+@onready var _mask_grid: MaskPartGrid = %MaskGrid
+#@onready var _last_skip_timer: Timer = %LastSkipTimer
 
 
 @export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
 @export_tool_button("Animate to options hidden", "Tween") var animate_to_state_options_hidden := _animate.bind(OptionsState.OPTIONS_HIDDEN)
 @export_tool_button("Animate to dialogue options", "Tween") var animate_to_state_dialogue_options := _animate.bind(OptionsState.OPTIONS_SHOWN)
 @export_tool_button("Animate to mask config", "Tween") var animate_to_state_mask := _animate.bind(OptionsState.MASK)
+
+
+@export var transition_type: Tween.TransitionType
+@export var soft_transition_type: Tween.TransitionType
+@export var easing_type: Tween.EaseType
 
 
 var selected_option: int:
@@ -44,6 +52,9 @@ var selected_option: int:
 var displayed_options: Array[DialogueOption]
 var active_dialog: Dialogue = null
 var _option_widgets: Array[DialogueOptionWidget]
+
+var _text_timer: SceneTreeTimer = null
+var _dialogue_skipped: bool = false
 
 ## Whether new dialogue is actively being shown.
 var is_dialogue_running: bool = false
@@ -66,30 +77,39 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_animate(OptionsState.HIDDEN, 0.0)
 		hide()
-		_continue_indicator.hide()
+		_continue_indicator.animate_out()
 		await get_parent().ready
 		_fix_tree_order()
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
+	var next_selectable_option := _can_advance_selected_option(1)
+	var prev_selectable_option := _can_advance_selected_option(-1)
 	if is_dialogue_running:
 		pass
-	elif event.is_action_pressed("ui_down", true) and selected_option < displayed_options.size() - 1:
-		selected_option += 1
-	elif event.is_action_pressed("ui_up", true) and selected_option > 0:
-		selected_option -= 1
-	elif event.is_action_pressed("ui_accept", true):
-		if displayed_options.is_empty():
+	elif event.is_action_pressed("ui_down", true) and next_selectable_option != selected_option:
+		get_viewport().set_input_as_handled()
+		selected_option = next_selectable_option
+	elif event.is_action_pressed("ui_up", true) and prev_selectable_option != selected_option:
+		get_viewport().set_input_as_handled()
+		selected_option = prev_selectable_option
+	if event.is_action_pressed("ui_accept", true):
+		if _text_timer:
+			_dialogue_skipped = true
+			_text_timer.time_left = 0.0
+			get_viewport().set_input_as_handled()
+		elif is_dialogue_running:
+			pass
+		elif _is_any_option_available() == -1:
+			get_viewport().set_input_as_handled()
+			_continue_indicator.animate_out()
 			await active_dialog.dialogue_end()
 			dialogue_ended.emit()
 			active_dialog = null
 			_animate(OptionsState.HIDDEN)
 		else:
-			var option := displayed_options[selected_option]
-			dialogue_advanced.emit(option)
-			show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
-			await _animate(OptionsState.OPTIONS_HIDDEN)
-			_show_dialogue_func(option.option_callback)
+			get_viewport().set_input_as_handled()
+			_select_option(selected_option)
 
 ## Show a [Dialogue] option.
 ## [br]
@@ -121,49 +141,57 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 	_tween.set_parallel()
 	match state:
 		OptionsState.HIDDEN:
-			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 0.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 0.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.chain().tween_callback(hide)
 		OptionsState.OPTIONS_HIDDEN:
 			_tween.tween_callback(show)
-			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 		OptionsState.OPTIONS_SHOWN:
 			_tween.tween_callback(show)
-			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 		OptionsState.MASK:
 			_tween.tween_callback(show)
-			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_mask_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 2.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ONE, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "scale", Vector2.ONE, time).set_ease(easing_type).set_trans(transition_type)
+			_tween.tween_property(_stats_display_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 	await _tween.finished
 
 
@@ -175,21 +203,23 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 	selected_option = 0
 
 	is_dialogue_running = true
+	_dialogue_skipped = false
 	var options: Array[DialogueOption] = await dialogue.call()
 	is_dialogue_running = false
-	displayed_options = options
+	displayed_options = options.duplicate()
 	var i := 0
 	for option in options:
 		var widget := DialogueOptionWidget.new(option.option_title)
+		widget.disabled = option.disabled
 		_options_vbox.add_child(widget)
 		widget.hovered.connect(func(): selected_option = i)
-		widget.clicked.connect(_show_dialogue_func.bind(option.option_callback))
+		widget.clicked.connect(func(): _select_option(i))
 		_option_widgets.append(widget)
 		i += 1
-	selected_option = 0
+	selected_option = _is_any_option_available()
 	dialogue_options_shown.emit()
-	if displayed_options.is_empty():
-		_continue_indicator.show()
+	if selected_option == -1 or displayed_options.size() == 1:
+		_continue_indicator.animate_in()
 	else:
 		await _animate(OptionsState.OPTIONS_SHOWN)
 
@@ -209,15 +239,18 @@ func show_text(text: String) -> void:
 			if _scroll_tween:
 				_scroll_tween.kill()
 			_scroll_tween = create_tween()
-			_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO),
+			_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(easing_type).set_trans(transition_type),
 		CONNECT_ONE_SHOT
 	)
-	await get_tree().create_timer(1.0).timeout
+	if not _dialogue_skipped:
+		_text_timer = get_tree().create_timer(1.0)
+		await _text_timer.timeout
+		_text_timer = null
 
 
 func show_mask_config() -> void:
 	await _animate(OptionsState.MASK)
-	await get_tree().create_timer(2.0).timeout
+	await _mask_grid.submitted
 
 
 func make_dialogue_object(dialogue: GDScript) -> Dialogue:
@@ -225,6 +258,38 @@ func make_dialogue_object(dialogue: GDScript) -> Dialogue:
 	obj._dialogue_window = self
 	add_child(obj)
 	return obj
+
+
+func _can_advance_selected_option(direction: int) -> int:
+	if displayed_options.is_empty() or displayed_options.all(func(it: DialogueOption): return it.disabled):
+		return 0
+	var i := selected_option + direction
+	if i < 0 or i >= displayed_options.size():
+		return selected_option
+	while displayed_options[i].disabled:
+		i += direction
+		if i < 0 or i >= displayed_options.size():
+			i = selected_option
+			break
+	return i
+
+
+func _on_mask_grid_part_hovered(part: MaskPart) -> void:
+	Util.unused(part)
+
+
+func _is_any_option_available(options: Array[DialogueOption] = displayed_options) -> int:
+	return options.find_custom(func(it: DialogueOption): return not it.disabled)
+
+
+func _select_option(index: int) -> void:
+	_continue_indicator.animate_out()
+	is_dialogue_running = true
+	var option := displayed_options[index]
+	dialogue_advanced.emit(option)
+	show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
+	await _animate(OptionsState.OPTIONS_HIDDEN)
+	_show_dialogue_func(option.option_callback)
 
 
 class DialogueOptionWidget extends HBoxContainer:
@@ -235,6 +300,7 @@ class DialogueOptionWidget extends HBoxContainer:
 
 	var text: String
 	var icon := TextureRect.new()
+	var disabled := false
 
 	func _init(_text: String) -> void:
 		text = _text
@@ -247,7 +313,16 @@ class DialogueOptionWidget extends HBoxContainer:
 		label.text = text
 		add_child(label)
 
-		mouse_entered.connect(hovered.emit)
+		if disabled:
+			var strikethrough := ColorRect.new()
+			strikethrough.custom_minimum_size.y = 3
+			strikethrough.set_anchors_and_offsets_preset(Control.PRESET_HCENTER_WIDE)
+			strikethrough.modulate.a = 0.5
+			label.modulate.a = 0.5
+			label.add_child(strikethrough)
+
+		if not disabled:
+			mouse_entered.connect(hovered.emit)
 		set_selected(false)
 
 	func _gui_input(event: InputEvent) -> void:
@@ -256,7 +331,10 @@ class DialogueOptionWidget extends HBoxContainer:
 			clicked.emit()
 
 	func set_selected(selected: bool) -> void:
-		icon.visible = selected
+		if disabled:
+			icon.visible = false
+		else:
+			icon.visible = selected
 
 
 class DialogueTranscript extends Container:
