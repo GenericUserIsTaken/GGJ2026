@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://wf7md4prousj"]
 
-[ext_resource type="Script" uid="uid://p047mpywgex5" path="res://scenes/main/rythm_node.gd" id="1_gq8q7"]
+[ext_resource type="Script" uid="uid://p047mpywgex5" path="res://scenes/main/rhythm_node.gd" id="1_gq8q7"]
 [ext_resource type="AudioStream" uid="uid://bmlhfamfpxtxs" path="res://assets/audio/MaskSongDemo.mp3" id="2_khd62"]
 
 [node name="RythmNode" type="Node3D" unique_id=1554134677]
