@@ -22,12 +22,6 @@ func dialogue() -> Array[DialogueOption]:
 	else:
 		await show("I am in a bit of a pickle")
 		await show("Would you be able to help me?")
-		await show("I am in a bit of a pickle")
-		await show("Would you be able to help me?")
-		await show("I am in a bit of a pickle")
-		await show("Would you be able to help me?")
-		await show("I am in a bit of a pickle")
-		await show("Would you be able to help me?")
 		return [
 			DialogueOption.new("Yes", _option_yes),
 			DialogueOption.new("No", _option_no),
@@ -59,3 +53,7 @@ func _option_money(money_value: int) -> Array[DialogueOption]:
 func _option_still_hate_me() -> Array[DialogueOption]:
 	await show("And I hate you too.")
 	return []
+
+
+func dialogue_end() -> void:
+	await _dialogue_window.show_mask_config()

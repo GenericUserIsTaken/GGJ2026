@@ -27,6 +27,8 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _center_spacer_control: Control = %CenterSpacerControl
 @onready var _left_top_spacer_control: Control = %LeftTopSpacerControl
 @onready var _transcript_container: PanelContainer = %TranscriptContainer
+@onready var _continue_indicator: Control = %ContinueIndicator
+@onready var _mask_vbox: VBoxContainer = %MaskGrid
 
 
 @export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
@@ -62,6 +64,7 @@ func _ready() -> void:
 	if not Engine.is_editor_hint():
 		_animate(OptionsState.HIDDEN, 0.0)
 		hide()
+		_continue_indicator.hide()
 		await get_parent().ready
 		_fix_tree_order()
 
@@ -75,6 +78,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		selected_option -= 1
 	elif event.is_action_pressed("ui_accept", true):
 		if displayed_options.is_empty():
+			await active_dialog.dialogue_end()
 			dialogue_ended.emit()
 			active_dialog = null
 			_animate(OptionsState.HIDDEN)
@@ -121,6 +125,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.chain().tween_callback(hide)
@@ -132,6 +137,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 		OptionsState.OPTIONS_SHOWN:
@@ -142,6 +148,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 		OptionsState.MASK:
@@ -152,6 +159,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	await _tween.finished
@@ -178,11 +186,13 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 		i += 1
 	selected_option = 0
 	dialogue_options_shown.emit()
-	if not displayed_options.is_empty():
+	if displayed_options.is_empty():
+		_continue_indicator.show()
+	else:
 		await _animate(OptionsState.OPTIONS_SHOWN)
 
 
-var _active_scroll_tween: Tween = null
+var _scroll_tween: Tween = null
 
 ## Show a piece of text in the transcript.
 ## This does animate the text and scroll.
@@ -194,13 +204,18 @@ func show_text(text: String) -> void:
 	_transcript.add_child(dialogue)
 	get_tree().process_frame.connect(
 		func():
-			if _active_scroll_tween:
-				_active_scroll_tween.kill()
-			_active_scroll_tween = create_tween()
-			_active_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO),
+			if _scroll_tween:
+				_scroll_tween.kill()
+			_scroll_tween = create_tween()
+			_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO),
 		CONNECT_ONE_SHOT
 	)
 	await get_tree().create_timer(1.0).timeout
+
+
+func show_mask_config() -> void:
+	await _animate(OptionsState.MASK)
+	await get_tree().create_timer(2.0).timeout
 
 
 func make_dialogue_object(dialogue: GDScript) -> Dialogue:

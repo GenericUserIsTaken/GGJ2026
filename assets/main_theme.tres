@@ -23,14 +23,86 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0arac"]
+bg_color = Color(0, 0.68, 0.045333292, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0.68, 0.045333292, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_611f8"]
+bg_color = Color(0.6784314, 0, 0.25455606, 1)
+border_color = Color(0.6784314, 0, 0.25490198, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pefyd"]
+bg_color = Color(0.6784314, 0, 0.25490198, 0.10980392)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.6784314, 0, 0.25490198, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xgdp2"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d80jv"]
+bg_color = Color(0, 0.68, 0.045333292, 0.10980392)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0, 0.68, 0.045333292, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
 [resource]
-default_font_size = 35
+default_font_size = 36
 EmptyMarginPanelContainer/base_type = &"PanelContainer"
 EmptyMarginPanelContainer/styles/panel = SubResource("StyleBoxEmpty_xgdp2")
 EmptyPanelContainer/base_type = &"PanelContainer"
 EmptyPanelContainer/styles/panel = SubResource("StyleBoxEmpty_64js0")
+GridContainer/constants/h_separation = 16
+GridContainer/constants/v_separation = 16
 HBoxContainer/constants/separation = 16
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_64js0")
+SmallLabel/base_type = &"Label"
+SmallLabel/font_sizes/font_size = 24
+StatsBar/styles/fill = SubResource("StyleBoxFlat_0arac")
+StatsBar/styles/negative_fill = SubResource("StyleBoxFlat_611f8")
+StatsBar/styles/negative_placeholder_fill = SubResource("StyleBoxFlat_pefyd")
+StatsBar/styles/panel = SubResource("StyleBoxFlat_xgdp2")
+StatsBar/styles/placeholder_fill = SubResource("StyleBoxFlat_d80jv")
 TranscriptVBoxContainer/base_type = &"VBoxContainer"
 TranscriptVBoxContainer/constants/separation = 0
 VBoxContainer/constants/separation = 16

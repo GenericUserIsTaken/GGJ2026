@@ -1,0 +1,67 @@
+[gd_scene format=3 uid="uid://dn3snu80qjv6e"]
+
+[ext_resource type="Script" uid="uid://titdpmk5m6rb" path="res://scenes/stats_display/stats_bar.gd" id="1_kcx6l"]
+
+[node name="StatsDisplay" type="GridContainer" unique_id=1198847043]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+
+[node name="Label" type="Label" parent="." unique_id=1585737662]
+layout_mode = 2
+theme_type_variation = &"SmallLabel"
+text = "Loyalty:"
+horizontal_alignment = 2
+
+[node name="StatsBar" type="Control" parent="." unique_id=1403192045]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_kcx6l")
+fill = 1.493
+placeholder_fill = -2.163
+metadata/_custom_type_script = "uid://titdpmk5m6rb"
+
+[node name="Label2" type="Label" parent="." unique_id=2008083540]
+layout_mode = 2
+theme_type_variation = &"SmallLabel"
+text = "Mental:"
+horizontal_alignment = 2
+
+[node name="StatsBar2" type="Control" parent="." unique_id=1649909257]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_kcx6l")
+fill = -1.042
+placeholder_fill = -2.163
+metadata/_custom_type_script = "uid://titdpmk5m6rb"
+
+[node name="Label3" type="Label" parent="." unique_id=233320709]
+layout_mode = 2
+theme_type_variation = &"SmallLabel"
+text = "Emotion:"
+horizontal_alignment = 2
+
+[node name="StatsBar3" type="Control" parent="." unique_id=675971260]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_kcx6l")
+fill = 1.493
+placeholder_fill = 2.469
+metadata/_custom_type_script = "uid://titdpmk5m6rb"
+
+[node name="Label4" type="Label" parent="." unique_id=1538231941]
+layout_mode = 2
+theme_type_variation = &"SmallLabel"
+text = "Physical:"
+horizontal_alignment = 2
+
+[node name="StatsBar4" type="Control" parent="." unique_id=1400796200]
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_kcx6l")
+fill = 0.28
+placeholder_fill = 0.585
+metadata/_custom_type_script = "uid://titdpmk5m6rb"
