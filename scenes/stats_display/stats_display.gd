@@ -14,29 +14,40 @@ class_name StatsDisplay extends GridContainer
 			child.visible = show_labels
 
 
-@export var editor_display_stats: MaskStats
-@export var editor_display_placeholder_stats: MaskStats
-@export_tool_button("Animate stats", "Tween") var editor_display_stats_callback := func(): show_stats(editor_display_stats, editor_display_placeholder_stats)
+var stats_tween: Tween = null
+var placeholder_stats_tween: Tween = null
+var vis_tween: Tween = null
 
 
-var tween: Tween = null
-
-
-func show_stats(stats: MaskStats, placeholder_stats: MaskStats = null) -> void:
-	if tween:
-		tween.kill()
-	tween = create_tween()
-	show()
-	tween.set_parallel()
-	tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+func show_stats(stats: MaskStats) -> void:
+	if stats_tween:
+		stats_tween.kill()
+	stats_tween = create_tween()
+	stats_tween.set_parallel()
 	for stat in MaskStats.stats():
-		tween.tween_property(self[stat], "fill", stats[stat], 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-		tween.tween_property(self[stat], "placeholder_fill", placeholder_stats[stat] if placeholder_stats else 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+		stats_tween.tween_property(self[stat], "fill", stats[stat] if stats else 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+
+
+func show_placeholder_stats(placeholder_stats: MaskStats) -> void:
+	if placeholder_stats_tween:
+		placeholder_stats_tween.kill()
+	placeholder_stats_tween = create_tween()
+	placeholder_stats_tween.set_parallel()
+	for stat in MaskStats.stats():
+		placeholder_stats_tween.tween_property(self[stat], "placeholder_fill", placeholder_stats[stat] if placeholder_stats else 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+
+
+func animate_show() -> void:
+	if vis_tween:
+		vis_tween.kill()
+	vis_tween = create_tween()
+	show()
+	stats_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 
 
 func animate_hide() -> void:
-	if tween:
-		tween.kill()
-	tween = create_tween()
-	tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tween.tween_callback(hide)
+	if vis_tween:
+		vis_tween.kill()
+	vis_tween = create_tween()
+	vis_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	vis_tween.tween_callback(hide)

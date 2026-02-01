@@ -21,7 +21,19 @@ size_flags_vertical = 3
 [node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=837807078]
 layout_mode = 2
 
-[node name="HoverStatsDisplay" parent="HBoxContainer" unique_id=1198847043 instance=ExtResource("1_h6l16")]
+[node name="PartHoverContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1514119565]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="PartTitleLabel" type="Label" parent="HBoxContainer/PartHoverContainer" unique_id=2147215295]
+unique_name_in_owner = true
+layout_mode = 2
+text = "part title"
+horizontal_alignment = 1
+
+[node name="HoverStatsDisplay" parent="HBoxContainer/PartHoverContainer" unique_id=1198847043 instance=ExtResource("1_h6l16")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
