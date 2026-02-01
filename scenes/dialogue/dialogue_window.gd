@@ -1,4 +1,13 @@
+@tool
 extends Control
+
+
+enum OptionsState {
+	HIDDEN,
+	OPTIONS_HIDDEN,
+	OPTIONS_SHOWN,
+	MASK,
+}
 
 
 signal dialogue_started
@@ -15,6 +24,15 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _transcript: VBoxContainer = %Transcript
 @onready var _transcript_scroll_container: ScrollContainer = %TranscriptScrollContainer
 @onready var _left_side_container: VBoxContainer = %LeftSideContainer
+@onready var _center_spacer_control: Control = %CenterSpacerControl
+@onready var _left_top_spacer_control: Control = %LeftTopSpacerControl
+@onready var _transcript_container: PanelContainer = %TranscriptContainer
+
+
+@export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
+@export_tool_button("Animate to options hidden", "Tween") var animate_to_state_options_hidden := _animate.bind(OptionsState.OPTIONS_HIDDEN)
+@export_tool_button("Animate to dialogue options", "Tween") var animate_to_state_dialogue_options := _animate.bind(OptionsState.OPTIONS_SHOWN)
+@export_tool_button("Animate to mask config", "Tween") var animate_to_state_mask := _animate.bind(OptionsState.MASK)
 
 
 var selected_option: int:
@@ -28,15 +46,12 @@ var _option_widgets: Array[DialogueOptionWidget]
 ## Whether new dialogue is actively being shown.
 var is_dialogue_running: bool = false
 
-var _active_tween: Tween = null
-
 
 func _fix_tree_order() -> void:
 	get_parent().move_child(self, get_parent().get_child_count() - 1)
 
 
 func _ready() -> void:
-	hide()
 	selected_option_changed.connect(
 		func(selected: int):
 			var i := 0
@@ -44,9 +59,11 @@ func _ready() -> void:
 				option.set_selected(selected == i)
 				i += 1
 	)
-	await get_parent().ready
-	_fix_tree_order()
-	_options_container.modulate.a = 0.0
+	if not Engine.is_editor_hint():
+		_animate(OptionsState.HIDDEN, 0.0)
+		hide()
+		await get_parent().ready
+		_fix_tree_order()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,24 +77,24 @@ func _unhandled_input(event: InputEvent) -> void:
 		if displayed_options.is_empty():
 			dialogue_ended.emit()
 			active_dialog = null
-			_animate_out()
+			_animate(OptionsState.HIDDEN)
 		else:
 			var option := displayed_options[selected_option]
 			dialogue_advanced.emit(option)
 			show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
-			await _animate_options_container_out()
+			await _animate(OptionsState.OPTIONS_HIDDEN)
 			_show_dialogue_func(option.option_callback)
-	elif event.is_action_pressed("ui_cancel"):
-		_animate_options_container_out()
 
 ## Show a [Dialogue] option.
 ## [br]
 ## This handles animating the visibility of the dialogue overlay, then starts at [param dialogue]'s [method Dialogue.dialogue] entry point.
 ## A set of options is then shown to the user once it finishes, allowing the user to choose between which of the next dialogues to show.
 func show_dialogue(dialogue: Dialogue) -> void:
+	if _tween.is_running():
+		await _tween.finished
 	dialogue._dialogue_window = self
 	active_dialog = dialogue
-	_animate_in()
+	_animate(OptionsState.OPTIONS_HIDDEN)
 	dialogue_started.emit()
 	_show_dialogue_func(dialogue.dialogue)
 
@@ -88,65 +105,56 @@ func clear_transcript() -> void:
 		child.queue_free()
 
 
-func _animate_in() -> void:
-	if _active_tween:
-		_active_tween.kill()
-	_active_tween = create_tween()
-	show()
-	modulate.a = 0.0
-	_active_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+var _tween: Tween = null
 
 
-func _animate_out() -> void:
-	if _active_tween:
-		_active_tween.kill()
-	_active_tween = create_tween()
-	_active_tween.tween_property(self, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_active_tween.tween_callback(hide)
-
-
-var _options_container_tween: Tween = null
-
-
-func _animate_options_container_in() -> void:
-	#await get_tree().process_frame
-	#var height := get_viewport_rect().size.y - _options_container.global_position.y
-	#_options_container.position.y = height
-	#print(_options_container.position.y)
-
-	if _options_container_tween:
-		_options_container_tween.kill()
-	_options_container_tween = create_tween()
-	_options_container_tween.set_parallel()
-	#_options_container_tween.tween_method(func(value: float):
-		#_options_container.position.y = lerpf(height, 0.0, value),
-		#0.0, 1.0, 0.75
-	#).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_outer_container.size_flags_stretch_ratio = 0.0
-	_left_side_container.size_flags_stretch_ratio = 1.5
-	_options_container.modulate.a = 0.0
-	_options_vbox.pivot_offset_ratio = Vector2(0.5, 0.5)
-	_options_vbox.scale = Vector2.ZERO
-	_options_outer_container.show()
-	_options_container_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.tween_property(_options_container, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	_options_container_tween.tween_property(_options_vbox, "scale", Vector2.ONE, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	await _options_container_tween.finished
-
-
-func _animate_options_container_out() -> void:
-	if _options_container_tween:
-		_options_container_tween.kill()
-	_options_container_tween = create_tween()
-	_options_container_tween.set_parallel()
-	#_options_container_tween.tween_property(_options_container, "position:y", get_viewport_rect().size.y - _options_container.global_position.y, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.tween_property(_options_container, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	_options_container_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_options_container_tween.chain().tween_callback(_options_outer_container.hide)
-	await _options_container_tween.finished
+func _animate(state: OptionsState, time: float = 0.75) -> void:
+	if _tween:
+		_tween.kill()
+	_tween = create_tween()
+	_tween.set_parallel()
+	match state:
+		OptionsState.HIDDEN:
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 0.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.chain().tween_callback(hide)
+		OptionsState.OPTIONS_HIDDEN:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		OptionsState.OPTIONS_SHOWN:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		OptionsState.MASK:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	await _tween.finished
 
 
 func _show_dialogue_func(dialogue: Callable) -> void:
@@ -171,7 +179,7 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 	selected_option = 0
 	dialogue_options_shown.emit()
 	if not displayed_options.is_empty():
-		await _animate_options_container_in()
+		await _animate(OptionsState.OPTIONS_SHOWN)
 
 
 var _active_scroll_tween: Tween = null
@@ -247,15 +255,6 @@ class DialogueTranscript extends Container:
 		label.minimum_size_changed.connect(update_minimum_size)
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		add_child(label)
-
-	func _ready() -> void:
-		pass
-		#modulate.a = 0.0
-		#x_offset = 0.0
-		#var tween := create_tween()
-		#tween.set_parallel(true)
-		#tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		#tween.tween_property(self, "x_offset", 10.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 
 	func _get_minimum_size() -> Vector2:
 		return label.get_combined_minimum_size()
