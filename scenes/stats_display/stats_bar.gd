@@ -2,8 +2,8 @@
 class_name StatsBar extends Control
 
 
-const MIN_VALUE := -10.0
-const MAX_VALUE :=  10.0
+const MIN_VALUE := -15.0
+const MAX_VALUE :=  15.0
 
 
 var bg_panel: StyleBox

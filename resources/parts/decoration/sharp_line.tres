@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="MaskPart" format=3 uid="uid://bxsusj2k44lt0"]
+
+[ext_resource type="Script" uid="uid://db0y2pir0kaa1" path="res://scripts/resources/mask_part.gd" id="1_d0u4o"]
+[ext_resource type="Script" uid="uid://ced22pm6wju3" path="res://scripts/resources/mask_stats.gd" id="2_i86eg"]
+[ext_resource type="Texture2D" uid="uid://5ed6ahijero8" path="res://assets/textures/parts/decoration/SharpLineDecoration.png" id="3_d0u4o"]
+
+[sub_resource type="Resource" id="Resource_i86eg"]
+script = ExtResource("2_i86eg")
+emotional = -2.0
+physical = -1.0
+
+[resource]
+script = ExtResource("1_d0u4o")
+type = 4
+texture = ExtResource("3_d0u4o")
+stats = SubResource("Resource_i86eg")
+name = "Lines"
+id = "decoration/sharp_line"
+metadata/_custom_type_script = "uid://db0y2pir0kaa1"

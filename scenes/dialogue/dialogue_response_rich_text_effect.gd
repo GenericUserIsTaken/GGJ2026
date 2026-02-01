@@ -7,7 +7,7 @@ var bbcode := "dialogue_response"
 func _process_custom_fx(char_fx: CharFXTransform) -> bool:
 	char_fx.color.a *= 0.5
 	var y := _get_y(fmod(char_fx.elapsed_time - char_fx.relative_index * 0.1, 1.0))
-	char_fx.transform = Transform2D(0.0, Vector2.ONE, 0.2, Vector2(10.0, y * -5.0)) * char_fx.transform
+	char_fx.transform = Transform2D(0.0, Vector2.ONE, 0.2, Vector2(10.0, y * -0.0)) * char_fx.transform
 	return true
 
 

@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 DialogueWindow="*uid://b5p27gwba51x"
-MaskManager="*uid://darr4dj0i0j7j"
 
 [display]
 

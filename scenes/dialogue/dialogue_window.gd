@@ -265,6 +265,10 @@ func show_text(text: String) -> void:
 		_text_timer = null
 
 
+func show_player_dialogue(text: String) -> void:
+	await show_text("[dialogue_response]%s[/dialogue_response]" % text)
+
+
 func show_mask_config(target_stats: MaskStats) -> MaskParts:
 	_mask_grid.target_stats = target_stats
 	_mask_grid.reset()
@@ -355,7 +359,7 @@ class DialogueOptionWidget extends HBoxContainer:
 
 	func set_selected(selected: bool) -> void:
 		if disabled:
-			icon.visible = false
+			icon.modulate.a = 0.0
 		else:
 			icon.modulate.a = 1.0 if selected else 0.0
 			label.theme_type_variation = "BoldLabel" if selected else ""
