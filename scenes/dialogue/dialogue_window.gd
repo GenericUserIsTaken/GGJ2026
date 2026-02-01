@@ -31,6 +31,7 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _mask_vbox: VBoxContainer = %MaskGrid
 @onready var _stats_display_container: Control = %StatsDisplayContainer
 @onready var _mask_grid: MaskPartGrid = %MaskGrid
+@onready var _stats_display: StatsDisplay = %StatsDisplay
 #@onready var _last_skip_timer: Timer = %LastSkipTimer
 
 
@@ -55,6 +56,7 @@ var _option_widgets: Array[DialogueOptionWidget]
 
 var _text_timer: SceneTreeTimer = null
 var _dialogue_skipped: bool = false
+var _target_stats: MaskStats = null
 
 ## Whether new dialogue is actively being shown.
 var is_dialogue_running: bool = false
@@ -248,9 +250,11 @@ func show_text(text: String) -> void:
 		_text_timer = null
 
 
-func show_mask_config() -> void:
+func show_mask_config(target_stats: MaskStats) -> MaskParts:
+	_mask_grid.target_stats = target_stats
+	_mask_grid.reset()
 	await _animate(OptionsState.MASK)
-	await _mask_grid.submitted
+	return await _mask_grid.submitted
 
 
 func make_dialogue_object(dialogue: GDScript) -> Dialogue:
@@ -276,6 +280,11 @@ func _can_advance_selected_option(direction: int) -> int:
 
 func _on_mask_grid_part_hovered(part: MaskPart) -> void:
 	Util.unused(part)
+
+
+func _on_mask_grid_mask_parts_changed(new_parts: MaskParts) -> void:
+	#var stats := new_parts.get_cumulative_stats()
+	Util.unused(new_parts)
 
 
 func _is_any_option_available(options: Array[DialogueOption] = displayed_options) -> int:
