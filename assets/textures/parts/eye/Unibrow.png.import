@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://c4n2uace1ev74"
-path="res://.godot/imported/Unibrow.png-2d30816eb19145ef89e4f1d9bea088b6.ctex"
+path="res://.godot/imported/Unibrow.png-c0ceab14f77ae23b076446920ce7a115.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/parts/eyes/Unibrow.png"
-dest_files=["res://.godot/imported/Unibrow.png-2d30816eb19145ef89e4f1d9bea088b6.ctex"]
+source_file="res://assets/textures/parts/eye/Unibrow.png"
+dest_files=["res://.godot/imported/Unibrow.png-c0ceab14f77ae23b076446920ce7a115.ctex"]
 
 [params]
 

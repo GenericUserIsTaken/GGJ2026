@@ -5,6 +5,18 @@
 [ext_resource type="FontVariation" uid="uid://b3ipt33hp304a" path="res://assets/fonts/bold_italic.tres" id="2_pefyd"]
 [ext_resource type="FontVariation" uid="uid://hgo4uvh8tgmn" path="res://assets/fonts/italic.tres" id="3_upuy7"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f8b1"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.8, 0.8, 0.19607843)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ojh6"]
 draw_center = false
 border_width_left = 4
@@ -146,6 +158,7 @@ default_font = ExtResource("1_xgdp2")
 default_font_size = 24
 BoldLabel/base_type = &"Label"
 BoldLabel/fonts/font = ExtResource("1_611f8")
+Button/styles/disabled = SubResource("StyleBoxFlat_6f8b1")
 Button/styles/hover = SubResource("StyleBoxFlat_7ojh6")
 Button/styles/normal = SubResource("StyleBoxFlat_2jsj3")
 Button/styles/pressed = SubResource("StyleBoxFlat_2est8")

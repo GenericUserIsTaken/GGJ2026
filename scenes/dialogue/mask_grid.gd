@@ -2,6 +2,15 @@
 class_name MaskPartGrid extends VBoxContainer
 
 
+const ORDER = [
+	MaskPart.Type.MASK,
+	MaskPart.Type.FOREHEAD,
+	MaskPart.Type.EYE,
+	MaskPart.Type.MOUTH,
+	MaskPart.Type.DECORATION,
+]
+
+
 signal part_hovered(part: MaskPart)
 signal part_hover_exited
 signal submitted(parts: MaskParts)
@@ -34,6 +43,14 @@ func _ready() -> void:
 	submit_button.pressed.connect(submitted.emit)
 
 
+var time := 0.0
+func _process(delta: float) -> void:
+	submit_button.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if not submit_button.disabled:
+		time += delta
+		submit_button.position.x = -abs(sin(time * PI)) * 10.0
+
+
 func scan_for_parts(base_dir: String = "res://resources/parts/") -> Array[MaskPart]:
 	var array: Array[MaskPart]
 	for entry in ResourceLoader.list_directory(base_dir):
@@ -50,24 +67,25 @@ func reset() -> void:
 	current_parts = MaskParts.new()
 	make_parts()
 	total_stats_display.show_placeholder_stats(target_stats)
+	check_valid()
 
 
 func make_parts() -> void:
 	for child in part_type_container.get_children():
 		child.queue_free()
 	var part_containers: Dictionary[MaskPart.Type, PartContainer]
+	for part_type in ORDER:
+		part_containers[part_type] = PartContainer.new()
+		part_containers[part_type].container = HFlowContainer.new()
+		part_containers[part_type].button_group = ButtonGroup.new()
+		part_containers[part_type].button_group.allow_unpress = true
+		part_type_container.add_child(part_containers[part_type].container)
+		var separator := HSeparator.new()
+		separator.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		part_type_container.add_child(separator)
 	for part in parts:
 		if not part.enabled:
 			continue
-		if part.type not in part_containers:
-			part_containers[part.type] = PartContainer.new()
-			part_containers[part.type].container = HFlowContainer.new()
-			part_containers[part.type].button_group = ButtonGroup.new()
-			part_containers[part.type].button_group.allow_unpress = true
-			part_type_container.add_child(part_containers[part.type].container)
-			var separator := HSeparator.new()
-			separator.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			part_type_container.add_child(separator)
 		var part_container := part_containers[part.type]
 		var tile := Button.new()
 		var img := part.texture.get_image()
@@ -95,7 +113,10 @@ func make_parts() -> void:
 
 
 func check_valid() -> void:
+	var last_disabled := submit_button.disabled
 	submit_button.disabled = not current_parts.is_valid()
+	if not submit_button.disabled and last_disabled:
+		time = 0.0
 
 
 var stats_tween: Tween

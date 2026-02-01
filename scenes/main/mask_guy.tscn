@@ -108,7 +108,7 @@ texture_filter = 2
 
 [node name="ForeheadSprite" type="Sprite3D" parent="." unique_id=953381564]
 unique_name_in_owner = true
-transform = Transform3D(1.0000001, -2.8212341e-08, 9.604271e-09, 1.3027011e-15, 0.94664925, -0.32226568, 3.5527137e-15, 0.32226563, 0.94664925, 0, 0.345, -1.468)
+transform = Transform3D(1.0000001, 0, 0, 0, 0.99999994, 0, 0, 0, 1, 0, 0.345, -1.468)
 pixel_size = 0.075
 alpha_cut = 1
 texture_filter = 2

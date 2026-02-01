@@ -29,5 +29,9 @@ func show(text: String) -> void:
 	await dialogue_window.show_text(text)
 
 
+func show_from_player(text: String) -> void:
+	await dialogue_window.show_player_dialogue(text)
+
+
 func pause(time: float) -> void:
 	await dialogue_window.get_tree().create_timer(time).timeout

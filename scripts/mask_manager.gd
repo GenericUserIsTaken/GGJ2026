@@ -1,11 +1,11 @@
-extends Node
+class_name MaskManager
 
 
-var mask_1: MaskParts
-var mask_2: MaskParts
+static var mask_1: MaskParts
+static var mask_2: MaskParts
 
 
-func get_mask_for_type(type: HitTime.HitType) -> MaskParts:
+static func get_mask_for_type(type: HitTime.HitType) -> MaskParts:
 	match type:
 		HitTime.HitType.BEATF:
 			return mask_1
