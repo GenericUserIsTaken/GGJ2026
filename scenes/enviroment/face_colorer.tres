@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dqyle8ekuw3vu"]
+
+[ext_resource type="Shader" uid="uid://b7xfjxmygwb6" path="res://scenes/enviroment/staircase_3.gdshader" id="1_7uxna"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_7uxna")
+shader_parameter/top_color = Color(0.6283572, 0.59597945, 0.5904932, 1)
+shader_parameter/bottom_color = Color(1, 1, 1, 1)
+shader_parameter/left_color = Color(0.3019608, 0.3019608, 0.3019608, 1)
+shader_parameter/right_color = Color(1, 1, 0, 1)
+shader_parameter/front_color = Color(0.8699952, 0.5188031, 0.3486244, 1)
+shader_parameter/back_color = Color(0.8556818, 0.7813481, 0.79034287, 1)
