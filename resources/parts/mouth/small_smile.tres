@@ -17,4 +17,5 @@ texture = ExtResource("3_tuwpi")
 stats = SubResource("Resource_6l16b")
 name = "Small smile"
 id = "mouth/small_smile"
+enabled = false
 metadata/_custom_type_script = "uid://db0y2pir0kaa1"

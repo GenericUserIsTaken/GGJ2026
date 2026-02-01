@@ -57,17 +57,22 @@ func make_parts() -> void:
 		child.queue_free()
 	var part_containers: Dictionary[MaskPart.Type, PartContainer]
 	for part in parts:
+		if not part.enabled:
+			continue
 		if part.type not in part_containers:
 			part_containers[part.type] = PartContainer.new()
 			part_containers[part.type].container = HFlowContainer.new()
 			part_containers[part.type].button_group = ButtonGroup.new()
 			part_containers[part.type].button_group.allow_unpress = true
 			part_type_container.add_child(part_containers[part.type].container)
+			var separator := HSeparator.new()
+			separator.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			part_type_container.add_child(separator)
 		var part_container := part_containers[part.type]
 		var tile := Button.new()
 		var img := part.texture.get_image()
 		img.decompress()
-		img.resize(img.get_width() / 4, img.get_height() / 4, Image.INTERPOLATE_CUBIC)
+		img.resize(img.get_width() / 2, img.get_height() / 2, Image.INTERPOLATE_CUBIC)
 		img.resize(img.get_width() * 2, img.get_height() * 2, Image.INTERPOLATE_NEAREST)
 		tile.icon = ImageTexture.create_from_image(img)
 		tile.mouse_entered.connect(part_hovered.emit.bind(part))
@@ -84,6 +89,9 @@ func make_parts() -> void:
 			check_valid()
 		)
 		part_container.container.add_child(tile)
+	#var last_child := part_type_container.get_child(-1) as HSeparator
+	#if last_child:
+		#last_child.queue_free()
 
 
 func check_valid() -> void:

@@ -13,11 +13,15 @@ func setup_as_boss() -> void:
 
 
 func animate_unhappy() -> void:
-	await mask_guy.animate_boss(false)
+	await mask_guy.animate_boss(1.0)
 
 
 func animate_happy() -> void:
-	await mask_guy.animate_boss(true)
+	await mask_guy.animate_boss(0.0)
+
+
+func animate_midhappy() -> void:
+	await mask_guy.animate_boss(0.5)
 
 
 func reset() -> void:

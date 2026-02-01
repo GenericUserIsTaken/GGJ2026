@@ -7,6 +7,7 @@ func dialogue_setup() -> void:
 
 func dialogue() -> Array[DialogueOption]:
 	await show("[Boss] Hello citizen. I have summoned you here")
+	await _dialogue_window.show_mask_config(MaskStats.new())
 	return [
 		DialogueOption.new("Hello Great Boss!", _dialogue_2),
 		DialogueOption.new("I didn't do anything...", _dialogue_2),
@@ -15,9 +16,13 @@ func dialogue() -> Array[DialogueOption]:
 
 
 func _dialogue_2() -> Array[DialogueOption]:
+	guy.animate_happy()
 	await show("Our great utopia is under an ancient threat. One has identified a resurfacing of flaw that has spread to many of your fellow citizens.")
+	await guy.animate_midhappy()
 	await show("Flaw shows the veins of its infection through the compromise of a citizen’s perspective.")
+	guy.animate_happy()
 	await show("These citizens are no longer able to thrive in our great utopia; this crisis must be confronted at once.")
+	guy.animate_unhappy()
 	return [
 		DialogueOption.new("What is my purpose?", _dialogue_3)
 	]
@@ -67,5 +72,5 @@ func _dialogue_how_subdialogue() -> Array[DialogueOption]:
 func _final_dialogue() -> Array[DialogueOption]:
 	await show("Enough said. A specimen of flaw will be brought before you, understand them thoroughly, then build an ascension.")
 	await show("A flood of similar flaw must be addressed soon after, one cannot hold them back forever.")
-	await show("[emph]May our utopia stay equalized[/emph]")
+	await show("[emph]May our utopia stay equalized.[/emph]")
 	return []

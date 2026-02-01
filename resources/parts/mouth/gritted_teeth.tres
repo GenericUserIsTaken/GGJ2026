@@ -17,4 +17,5 @@ texture = ExtResource("3_i5eya")
 stats = SubResource("Resource_ovx8v")
 name = "Gritted teeth"
 id = "mouth/gritted_teeth"
+enabled = false
 metadata/_custom_type_script = "uid://db0y2pir0kaa1"

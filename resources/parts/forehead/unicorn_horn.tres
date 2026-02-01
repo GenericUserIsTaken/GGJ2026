@@ -8,8 +8,6 @@
 script = ExtResource("2_1fjlj")
 loyalty = 3.0
 mental = 4.0
-emotional = -2.0
-physical = 2.0
 metadata/_custom_type_script = "uid://ced22pm6wju3"
 
 [resource]

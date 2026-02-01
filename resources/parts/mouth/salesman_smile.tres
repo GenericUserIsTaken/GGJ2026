@@ -6,10 +6,10 @@
 
 [sub_resource type="Resource" id="Resource_qktlw"]
 script = ExtResource("2_qktlw")
-loyalty = -3.0
-mental = 2.0
-emotional = 2.0
-physical = -1.0
+loyalty = 5.0
+mental = -5.0
+emotional = 5.0
+physical = 5.0
 
 [resource]
 script = ExtResource("1_qyu2y")

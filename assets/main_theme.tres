@@ -1,5 +1,41 @@
 [gd_resource type="Theme" format=3 uid="uid://b4soaa4xy6ot7"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ojh6"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 0.8, 0.8, 0.78431374)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2jsj3"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 0.8, 0.8, 0.49803922)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2est8"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_size = 5
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgdp2"]
 content_margin_left = 8.0
 content_margin_top = 8.0
@@ -7,6 +43,12 @@ content_margin_right = 8.0
 content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_64js0"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_64js0"]
+color = Color(0.8, 0.8, 0.8, 1)
+grow_begin = 12.0
+grow_end = 12.0
+thickness = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_64js0"]
 content_margin_left = 16.0
@@ -96,6 +138,9 @@ expand_margin_bottom = 4.0
 
 [resource]
 default_font_size = 24
+Button/styles/hover = SubResource("StyleBoxFlat_7ojh6")
+Button/styles/normal = SubResource("StyleBoxFlat_2jsj3")
+Button/styles/pressed = SubResource("StyleBoxFlat_2est8")
 EmptyMarginPanelContainer/base_type = &"PanelContainer"
 EmptyMarginPanelContainer/styles/panel = SubResource("StyleBoxEmpty_xgdp2")
 EmptyPanelContainer/base_type = &"PanelContainer"
@@ -103,6 +148,7 @@ EmptyPanelContainer/styles/panel = SubResource("StyleBoxEmpty_64js0")
 GridContainer/constants/h_separation = 16
 GridContainer/constants/v_separation = 16
 HBoxContainer/constants/separation = 16
+HSeparator/styles/separator = SubResource("StyleBoxLine_64js0")
 MarginContainer/constants/margin_bottom = 16
 MarginContainer/constants/margin_left = 16
 MarginContainer/constants/margin_right = 16

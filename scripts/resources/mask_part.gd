@@ -16,7 +16,7 @@ enum Type {
 @export var stats: MaskStats
 @export var name: String
 @export var id: String
-
+@export var enabled: bool = true
 
 @export_tool_button("Autofill") var autofill_values := func():
 	type = MaskPart.Type[texture.resource_path.get_base_dir().get_file().to_upper()]

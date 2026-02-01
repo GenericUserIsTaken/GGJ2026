@@ -77,6 +77,7 @@ func _ready() -> void:
 				i += 1
 	)
 	if not Engine.is_editor_hint():
+		custom_minimum_size = Vector2(1280, 720)
 		_animate(OptionsState.HIDDEN, 0.0)
 		hide()
 		_continue_indicator.animate_out()
