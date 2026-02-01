@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="MaskPart" format=3 uid="uid://d1saso0yj5k6a"]
+
+[ext_resource type="Script" uid="uid://db0y2pir0kaa1" path="res://scripts/resources/mask_part.gd" id="1_xqljs"]
+[ext_resource type="Script" uid="uid://ced22pm6wju3" path="res://scripts/resources/mask_stats.gd" id="2_wkwml"]
+[ext_resource type="Texture2D" uid="uid://d0itwsliyffjl" path="res://assets/textures/mask_shapes/CircleMask.png" id="3_grq55"]
+
+[sub_resource type="Resource" id="Resource_lgvon"]
+script = ExtResource("2_wkwml")
+loyalty = -1.0
+mental = 2.0
+emotional = -3.0
+physical = 4.0
+metadata/_custom_type_script = "uid://ced22pm6wju3"
+
+[resource]
+script = ExtResource("1_xqljs")
+texture = ExtResource("3_grq55")
+stats = SubResource("Resource_lgvon")
+name = "circle"
+id = "masks/circle"
+metadata/_custom_type_script = "uid://db0y2pir0kaa1"

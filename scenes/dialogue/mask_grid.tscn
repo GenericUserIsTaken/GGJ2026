@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://7h86rwj3u0m1"]
+
+[ext_resource type="PackedScene" uid="uid://dn3snu80qjv6e" path="res://scenes/stats_display/stats_display.tscn" id="1_h6l16"]
+[ext_resource type="Script" uid="uid://c634ff6myqqdg" path="res://scenes/dialogue/mask_grid.gd" id="1_i20at"]
+[ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="3_wvsns"]
+
+[node name="MaskPartGrid" type="VBoxContainer" unique_id=304840111]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 1)
+script = ExtResource("1_i20at")
+
+[node name="PartTypeContainer" type="VBoxContainer" parent="." unique_id=831211158]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=837807078]
+layout_mode = 2
+
+[node name="HoverStatsDisplay" parent="HBoxContainer" unique_id=1198847043 instance=ExtResource("1_h6l16")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 1
+show_labels = false
+
+[node name="SubmitButton" type="Button" parent="HBoxContainer" unique_id=825145784]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_wvsns")

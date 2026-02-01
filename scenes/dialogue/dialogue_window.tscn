@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cyhfyn2ceuyef" path="res://scenes/dialogue/dialogue_window.gd" id="1_s4muj"]
 [ext_resource type="PackedScene" uid="uid://dn3snu80qjv6e" path="res://scenes/stats_display/stats_display.tscn" id="2_fcdga"]
+[ext_resource type="PackedScene" uid="uid://7h86rwj3u0m1" path="res://scenes/dialogue/mask_grid.tscn" id="2_fxb7m"]
 [ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="2_s4muj"]
+[ext_resource type="Script" uid="uid://bp4gh08jngpao" path="res://scenes/dialogue/continue_indicator.gd" id="5_x04ek"]
 
 [sub_resource type="Animation" id="Animation_s4muj"]
 length = 0.001
@@ -49,6 +51,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s4muj")
+transition_type = 5
+soft_transition_type = 7
+easing_type = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=961159396]
 layout_mode = 1
@@ -74,7 +79,7 @@ theme_override_constants/separation = 0
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.0
+size_flags_stretch_ratio = 1.5
 
 [node name="OptionsOuterContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer" unique_id=469345931]
 unique_name_in_owner = true
@@ -94,6 +99,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 1)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -110,31 +116,42 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
-scale = Vector2(1e-05, 1e-05)
+pivot_offset_ratio = Vector2(0.5, 0.5)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MaskGrid" type="VBoxContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control" unique_id=774864043]
+[node name="MaskGrid" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control" unique_id=304840111 instance=ExtResource("2_fxb7m")]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-pivot_offset_ratio = Vector2(0.5, 0.5)
+scale = Vector2(1e-05, 1e-05)
+pivot_offset_ratio = Vector2(0.5, 0.75)
 
-[node name="VBoxContainer" type="HFlowContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/MaskGrid" unique_id=1064066495]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="StatsDisplay" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/MaskGrid" unique_id=1404619955 instance=ExtResource("2_fcdga")]
-layout_mode = 2
-
-[node name="CenterSpacerControl" type="Control" parent="PanelContainer/HBoxContainer" unique_id=1937081262]
+[node name="CenterSpacerControl" type="Control" parent="PanelContainer/HBoxContainer" unique_id=68438978]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.0
+
+[node name="StatsDisplayContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/CenterSpacerControl" unique_id=166422786]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -176.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1e-05, 1e-05)
+pivot_offset_ratio = Vector2(0.5, 1)
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="StatsDisplay" parent="PanelContainer/HBoxContainer/CenterSpacerControl/StatsDisplayContainer" unique_id=1198847043 instance=ExtResource("2_fcdga")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 8
 
 [node name="TranscriptContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer" unique_id=237788116]
 unique_name_in_owner = true
@@ -184,7 +201,6 @@ size_flags_horizontal = 8
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer/ContinueIndicatorContainer" unique_id=1372139323]
 libraries/ = SubResource("AnimationLibrary_fxb7m")
-autoplay = &"bob_indicator"
 
 [node name="ContinueIndicator" type="TextureRect" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer/ContinueIndicatorContainer" unique_id=1885482279]
 unique_name_in_owner = true
@@ -194,10 +210,16 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -24.0
+offset_left = -23.435925
 offset_top = -24.0
-offset_right = 24.0
+offset_right = 24.564075
 offset_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_s4muj")
+script = ExtResource("5_x04ek")
+
+[node name="LastSkipTimer" type="Timer" parent="." unique_id=1536486337]
+unique_name_in_owner = true
+
+[connection signal="part_hovered" from="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/MaskGrid" to="." method="_on_mask_grid_part_hovered"]
