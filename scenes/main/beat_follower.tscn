@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://mwnjbnj3k5uk"]
+
+[ext_resource type="PackedScene" uid="uid://bl0ix84g6lr5e" path="res://scenes/main/mask_guy.tscn" id="1_0jky0"]
+[ext_resource type="Script" uid="uid://boi6sehjfhkhe" path="res://scenes/main/beat_follower.gd" id="1_djc2y"]
+
+[node name="BeatFollower" type="PathFollow3D" unique_id=265675767]
+transform = Transform3D(-0.9999219, 0, 0.011785284, 0, 1, 0, -0.011785284, 0, -0.9999219, 0, 0, 0)
+loop = false
+script = ExtResource("1_djc2y")
+
+[node name="MaskGuy" parent="." unique_id=725402954 instance=ExtResource("1_0jky0")]

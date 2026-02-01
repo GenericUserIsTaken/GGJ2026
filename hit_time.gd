@@ -10,6 +10,7 @@ enum HitType {
 @export var subbeat: int
 @export var song_time: float
 @export var hit_type : HitType
+@export var spawned : bool = false
 
 func _init(measure = null, subbeat = null, hit_type = null, song_time = null):
 	self.measure = measure

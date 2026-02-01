@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d28x6gj8wfy7s" path="res://scenes/main/main.gd" id="1_hyk8p"]
 [ext_resource type="Material" uid="uid://dqyle8ekuw3vu" path="res://scenes/enviroment/face_colorer.tres" id="2_iuonh"]
-[ext_resource type="PackedScene" uid="uid://bl0ix84g6lr5e" path="res://scenes/main/mask_guy.tscn" id="3_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://mwnjbnj3k5uk" path="res://scenes/main/beat_follower.tscn" id="3_k2fmo"]
 
 [sub_resource type="Environment" id="Environment_iuonh"]
 ambient_light_source = 3
@@ -68,7 +68,5 @@ mesh = SubResource("ArrayMesh_1e5vi")
 [node name="Path3D" type="Path3D" parent="." unique_id=1591232519]
 curve = SubResource("Curve3D_iuonh")
 
-[node name="PathFollow3D" type="PathFollow3D" parent="Path3D" unique_id=63024817]
+[node name="BeatFollower" parent="Path3D" unique_id=265675767 instance=ExtResource("3_k2fmo")]
 transform = Transform3D(-0.9999219, 0, 0.011785284, 0, 1, 0, -0.011785284, 0, -0.9999219, -10.374, 12.719, -22.325344)
-
-[node name="MaskGuy" parent="Path3D/PathFollow3D" unique_id=725402954 instance=ExtResource("3_k2fmo")]

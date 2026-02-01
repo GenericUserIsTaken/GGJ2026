@@ -21,10 +21,12 @@ measure 30 subbeat 8 -> measure 31 subbeat 0
 const _bpm := 140.0
 const _measure_length : float = (8.0*30.0)/_bpm
 const _subdivision_length : float = 30.0/_bpm
+const _look_ahead : int = 5
 
 @onready var music_player : AudioStreamPlayer= self.get_node("MaskSongDemo")
 @export var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
+@export var _measure_timings : Dictionary[int,Array] = {}
 @export var _timing_index = 0
 @export var _margin := 0.08
 
@@ -89,20 +91,32 @@ func _process(delta: float) -> void:
 			last_measure += 1
 			next_measure += _measure_length
 			#print("New measure: ", last_measure, " calculated measure: ", calc_measure(_song_time))
-			if(target != null and last_measure +1 == target.measure):
-				print("next measure is a target! ",target.measure)
+			for i in range(1, _look_ahead):
+				var hits = _measure_timings.get(last_measure+i)
+				if(hits != null and hits.size()>0):
+					for j in hits:
+						if(not j.spawned):
+							print("spawning ",j)
+							spawn_visual(j)
+							j.spawned = true
+					#print("Looking ahead from measure ",last_measure+1," to measure ",last_measure+_look_ahead," found hits at measure ",last_measure+i," ",hits)
+			
+			#if(target != null and last_measure +1 == target.measure):
+				#print("next measure is a target! ",target.measure)
 				#load in the guys and make them tween
-		
+
+func spawn_visual(hit_time):
+	pass
+
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.pressed and event.keycode == KEY_F:
 			#append_new_hit_time(_songtime)
 			var target = get_next_target()
 			var subbeat_target = calculate_subbeat(target)
-			print("next subbeat target: ",subbeat_target)
+			#print("next subbeat target: ",subbeat_target)
 			if (subbeat_target != -1 && active_subbeat == subbeat_target):
 				print("Hit subbeat: ", active_subbeat, " with offset ", _song_time - target.song_time)
-				
 
 func calculate_subbeat(hittime : HitTime) -> int:
 	if(hittime == null):
@@ -123,9 +137,12 @@ func append_new_hit_time(songtime,hittype=HitTime.HitType.BEATF):
 	_timings.append(newTime)
 	print(newTime)
 
+#cursed function that returns an array, but also makes a dict and saves it in the class
+#should refactor later
 func load_data_from_file(path: String) -> Array[HitTime]:
 	var result: Array[HitTime] = []
 	var lookup: Array = [HitTime.HitType.BEATF,HitTime.HitType.BEATJ]
+	var measure_dict : Dictionary[int,Array] = {}
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
@@ -140,9 +157,14 @@ func load_data_from_file(path: String) -> Array[HitTime]:
 
 		var parts := line.split(" ", false)
 		if parts.size() >= 3:
-			var a = int(parts[0])
-			var b = int(parts[1])
-			var c = int(parts[2])
-			result.append(HitTime.new(a, b, lookup[c-1]))
-
+			var a = int(parts[0]) #measure
+			var b = int(parts[1]) #subbeat
+			var c = int(parts[2]) #hittype
+			var new_hit = HitTime.new(a, b, lookup[c-1])
+			result.append(new_hit)
+			#TODO fix cursed ass function where we load a dict into memory instead of returning both
+			#measure_dict.set(a,measure_dict.get_or_add(a,[]).append(new_hit))
+			measure_dict.get_or_add(a,[]).append(new_hit)
+	_measure_timings = measure_dict
+	#print(_measure_timings)
 	return result
