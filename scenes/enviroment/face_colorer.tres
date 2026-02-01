@@ -5,7 +5,7 @@
 [resource]
 render_priority = 0
 shader = ExtResource("1_7uxna")
-shader_parameter/top_color = Color(0.6283572, 0.59597945, 0.5904932, 1)
+shader_parameter/top_color = Color(0.73105305, 0.57028514, 0.3943521, 1)
 shader_parameter/bottom_color = Color(1, 1, 1, 1)
 shader_parameter/left_color = Color(0.3019608, 0.3019608, 0.3019608, 1)
 shader_parameter/right_color = Color(1, 1, 0, 1)
