@@ -6,6 +6,8 @@ const DialogueWindow = preload("uid://cyhfyn2ceuyef")
 
 
 var _dialogue_window: DialogueWindow
+var guy: DialogueGuyScene:
+	get: return _dialogue_window.dialogue_mask_guy
 
 ## The entry point into the dialogue interaction.
 ## [br]
@@ -17,6 +19,10 @@ var _dialogue_window: DialogueWindow
 
 func dialogue_end() -> void:
 	@warning_ignore("redundant_await") await null
+
+
+func dialogue_setup() -> void:
+	pass
 
 
 func show(text: String):

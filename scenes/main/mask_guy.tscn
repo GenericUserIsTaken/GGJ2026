@@ -1,6 +1,8 @@
 [gd_scene format=4 uid="uid://bl0ix84g6lr5e"]
 
 [ext_resource type="Script" uid="uid://btom4l8tvqgdk" path="res://scenes/main/mask_guy.gd" id="1_urgd6"]
+[ext_resource type="PackedScene" uid="uid://dqdhynur1ls3n" path="res://scenes/main/boss_mask_happy.glb" id="2_oywdl"]
+[ext_resource type="PackedScene" uid="uid://damq0qldc0bnc" path="res://scenes/main/boss_mask_sad.glb" id="3_07dg2"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1o5lm"]
 resource_name = "character"
@@ -122,3 +124,13 @@ transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 3.5527137e-15, 0, 1, 0, -0.126
 pixel_size = 0.075
 alpha_cut = 1
 texture_filter = 2
+
+[node name="BossMaskContainer" type="Node3D" parent="." unique_id=534264022]
+unique_name_in_owner = true
+visible = false
+
+[node name="boss_mask_happy" parent="BossMaskContainer" unique_id=1449148745 instance=ExtResource("2_oywdl")]
+transform = Transform3D(0.9999997, 0, 0, 0, -4.371139e-08, -0.99999994, 0, 0.99999976, -4.3711374e-08, 0, 0, -1.3548917)
+
+[node name="boss_mask_sad" parent="BossMaskContainer" unique_id=1192530453 instance=ExtResource("3_07dg2")]
+transform = Transform3D(0.43837118, 0.898794, -3.9287535e-08, 0, -4.371139e-08, -1, -0.898794, 0.43837118, -1.9161812e-08, -1.2177684, 0, -0.5939454)
