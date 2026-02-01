@@ -2,7 +2,9 @@
 
 [ext_resource type="Script" uid="uid://d28x6gj8wfy7s" path="res://scenes/main/main.gd" id="1_hyk8p"]
 [ext_resource type="Material" uid="uid://dqyle8ekuw3vu" path="res://scenes/enviroment/face_colorer.tres" id="2_iuonh"]
+[ext_resource type="Script" uid="uid://4kiv2s2g5wau" path="res://scenes/main/beat_path.gd" id="3_6q06x"]
 [ext_resource type="PackedScene" uid="uid://mwnjbnj3k5uk" path="res://scenes/main/beat_follower.tscn" id="3_k2fmo"]
+[ext_resource type="PackedScene" uid="uid://wf7md4prousj" path="res://scenes/main/rhythm_node.tscn" id="4_l3cfh"]
 
 [sub_resource type="Environment" id="Environment_iuonh"]
 ambient_light_source = 3
@@ -65,8 +67,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.330322, -11, 4.9164314)
 transform = Transform3D(3.576279e-07, 0, -1, 0, 0.3, 0, 1, 0, 3.576279e-07, 9.999999, 7, -15.000001)
 mesh = SubResource("ArrayMesh_1e5vi")
 
-[node name="Path3D" type="Path3D" parent="." unique_id=1591232519]
+[node name="BeatPath" type="Path3D" parent="." unique_id=1591232519]
 curve = SubResource("Curve3D_iuonh")
+script = ExtResource("3_6q06x")
 
-[node name="BeatFollower" parent="Path3D" unique_id=265675767 instance=ExtResource("3_k2fmo")]
-transform = Transform3D(-0.9999219, 0, 0.011785284, 0, 1, 0, -0.011785284, 0, -0.9999219, -10.374, 12.719, -22.325344)
+[node name="BeatFollower" parent="BeatPath" unique_id=265675767 instance=ExtResource("3_k2fmo")]
+transform = Transform3D(-0.9999209, 0, 0.011785272, 0, 1, 0, -0.011785272, 0, -0.9999209, -10.374, 12.719, -22.325344)
+
+[node name="RythmNode" parent="." unique_id=1554134677 instance=ExtResource("4_l3cfh")]
+
+[connection signal="spawn_new_visual" from="RythmNode" to="BeatPath" method="_on_rythm_node_spawn_new_visual"]

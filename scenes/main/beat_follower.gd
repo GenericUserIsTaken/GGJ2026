@@ -1,16 +1,22 @@
 class_name BeatFollower extends PathFollow3D
 @export var timing: HitTime
-static var despawn_time := 5.0 #despawn self after 5 seconds 
-static var targe_dist := 67.3 #where we are supposed to be when our time comes
-static var min_dist := 1000.0 #clamp min dist
-static var max_dist := 1000.0 #clamp max dist
-static var march_speed := 10.0 #speed of person
+var follow_enabled := false
+static var despawn_time := 30.0 #despawn self after 30 seconds 
+static var target_dist := 67.23 #where we are supposed to be when our time comes
+static var min_dist := 0.0 #clamp min dist
+static var max_dist := 128.21 #clamp max dist
+static var march_speed := 25.0 #speed of person
 
 func update_from_song_time(song_time):
-	#negative for upcoming, 0 for center, positive for leaving
+	if(not follow_enabled):
+		return
+	if self.timing == null:
+		push_warning("CANNOT FOLLOW BEAT WITH NULL TIMING INFO")
+		return
+	var time_until_hit = timing.song_time - song_time
+	if time_until_hit < -despawn_time:
+		self.queue_free()
 	var march_sub_gap = march_speed * RhythmNode._subdivision_length
-	pass
-	
-	#var song_offset = song_time - timing.song_time
-	#self.progress = timing.song_time - song_time
-	#how many seconds 
+	var spawn_pos = march_sub_gap * time_until_hit
+	print("SPAWN POS: ",spawn_pos)
+	self.progress = clamp(target_dist - spawn_pos, min_dist, max_dist)

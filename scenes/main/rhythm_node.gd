@@ -24,7 +24,7 @@ const _subdivision_length : float = 30.0/_bpm
 const _look_ahead : int = 5
 
 @onready var music_player : AudioStreamPlayer= self.get_node("MaskSongDemo")
-@export var _song_time := 0.0 #export to see time in editor
+static var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
 @export var _measure_timings : Dictionary[int,Array] = {}
 @export var _timing_index = 0
@@ -38,6 +38,8 @@ const _look_ahead : int = 5
 
 @export var last_measure := 1
 @export var next_measure := _measure_length
+
+signal spawn_new_visual(timing)
 
 #region calc methods for conversion between songtime and measures/subbeats
 static func calc_measure(song_time) -> int:
@@ -53,12 +55,23 @@ static func calc_songtime(measure,subbeat) -> float:
 #endregion
 
 func _ready() -> void:
-	music_player.play()
 	var data = load_data_from_file("res://timedata.txt")
 	_timings = data
 	for row in data:
 		print(row)
+	#await get_tree().create_timer(3.0).timeout
+	#start_rhythm()
 
+func start_rhythm():
+	for i in range(0, _look_ahead):
+		var hits = _measure_timings.get(last_measure+i)
+		if(hits != null and hits.size()>0):
+			for j in hits:
+				if(not j.spawned):
+					print("spawning ",j)
+					spawn_visual(j)
+					j.spawned = true
+	music_player.play()
 
 func _process(delta: float) -> void:
 		_song_time = music_player.get_playback_position() + AudioServer.get_time_since_last_mix()
@@ -100,13 +113,13 @@ func _process(delta: float) -> void:
 							spawn_visual(j)
 							j.spawned = true
 					#print("Looking ahead from measure ",last_measure+1," to measure ",last_measure+_look_ahead," found hits at measure ",last_measure+i," ",hits)
-			
+		
 			#if(target != null and last_measure +1 == target.measure):
 				#print("next measure is a target! ",target.measure)
 				#load in the guys and make them tween
 
 func spawn_visual(hit_time):
-	pass
+	spawn_new_visual.emit(hit_time)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
