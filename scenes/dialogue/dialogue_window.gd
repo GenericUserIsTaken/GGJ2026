@@ -107,14 +107,14 @@ func _input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif is_dialogue_running:
 			pass
-		elif _is_any_option_available() == -1:
+		elif _is_any_option_available() == -1 and active_dialog != null:
 			get_viewport().set_input_as_handled()
 			_continue_indicator.animate_out()
 			await active_dialog.dialogue_end()
 			dialogue_ended.emit()
 			active_dialog = null
 			_animate(OptionsState.HIDDEN)
-		else:
+		elif active_dialog != null:
 			get_viewport().set_input_as_handled()
 			_select_option(selected_option)
 
