@@ -72,6 +72,7 @@ func start_song1()-> void:
 	music_player = music_player1
 	start_rhythm()
 	music_player.play()
+	music_player.finished.connect(self.song_end_callback)
 	
 func start_song2()-> void:
 	reset.emit()
@@ -82,6 +83,10 @@ func start_song2()-> void:
 	music_player = music_player2
 	start_rhythm()
 	music_player.play()
+	music_player.finished.connect(self.song_end_callback)
+
+func song_end_callback():
+	song_end.emit()
 
 func _ready() -> void:
 	#start_song1()
