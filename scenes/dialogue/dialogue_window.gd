@@ -54,6 +54,8 @@ func _fix_tree_order() -> void:
 
 
 func _ready() -> void:
+	if Engine.is_editor_hint() and get_parent() == get_tree().root:
+		hide()
 	selected_option_changed.connect(
 		func(selected: int):
 			var i := 0
