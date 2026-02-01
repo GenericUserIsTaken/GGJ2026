@@ -236,7 +236,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_t0672")
 
-[node name="Main" type="Node3D" unique_id=474005264]
+[node name="MainLit" type="Node3D" unique_id=474005264]
 script = ExtResource("1_8f5uk")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=2095892455]
