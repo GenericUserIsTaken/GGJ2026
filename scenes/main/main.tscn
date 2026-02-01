@@ -8,7 +8,7 @@
 ambient_light_source = 3
 ambient_light_color = Color(0.98234254, 0.9823423, 0.9823424, 1)
 
-[node name="Main" type="Node3D" unique_id=474005264]
+[node name="Main2" type="Node3D" unique_id=474005264]
 script = ExtResource("1_hyk8p")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=2095892455]

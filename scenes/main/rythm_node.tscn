@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://wf7md4prousj"]
+
+[ext_resource type="Script" uid="uid://p047mpywgex5" path="res://scenes/main/rythm_node.gd" id="1_gq8q7"]
+[ext_resource type="AudioStream" uid="uid://bmlhfamfpxtxs" path="res://assets/audio/MaskSongDemo.mp3" id="2_khd62"]
+
+[node name="RythmNode" type="Node3D" unique_id=1554134677]
+script = ExtResource("1_gq8q7")
+
+[node name="MaskSongDemo" type="AudioStreamPlayer" parent="." unique_id=367506488]
+stream = ExtResource("2_khd62")
