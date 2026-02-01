@@ -10,7 +10,7 @@ varying vec3 world_normal;
 
 // Vertex Shader
 void vertex() {
-	world_normal = NORMAL;
+	world_normal = normalize(NORMAL);
     }
 
 // Fragment Shader
