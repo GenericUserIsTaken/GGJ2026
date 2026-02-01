@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://m56ocgl2gdoe"]
+
+[ext_resource type="Script" uid="uid://bu1pv8ly6xmoe" path="res://scenes/dialogue/guy_scene.gd" id="1_215ly"]
+[ext_resource type="PackedScene" uid="uid://bl0ix84g6lr5e" path="res://scenes/main/mask_guy.tscn" id="1_ron3x"]
+
+[node name="GuyScene" type="Node3D" unique_id=1765775482]
+script = ExtResource("1_215ly")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=780497]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.72050256, -4.6864777)
+
+[node name="MaskGuy" parent="." unique_id=725402954 instance=ExtResource("1_ron3x")]
+unique_name_in_owner = true
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=366271016]
+transform = Transform3D(0.577416, 0.63570976, 0.5123123, 0, -0.62748754, 0.77862656, 0.8164501, -0.44959143, -0.36232135, 0, 0, -2.3775196)
