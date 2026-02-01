@@ -15,5 +15,9 @@ var _dialogue_window: DialogueWindow
 @abstract func dialogue() -> Array[DialogueOption]
 
 
+func dialogue_end() -> void:
+	@warning_ignore("redundant_await") await null
+
+
 func show(text: String):
 	await _dialogue_window.show_text(text)

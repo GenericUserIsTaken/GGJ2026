@@ -1,6 +1,45 @@
 [gd_scene format=3 uid="uid://b5p27gwba51x"]
 
 [ext_resource type="Script" uid="uid://cyhfyn2ceuyef" path="res://scenes/dialogue/dialogue_window.gd" id="1_s4muj"]
+[ext_resource type="PackedScene" uid="uid://dn3snu80qjv6e" path="res://scenes/stats_display/stats_display.tscn" id="2_fcdga"]
+[ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="2_s4muj"]
+
+[sub_resource type="Animation" id="Animation_s4muj"]
+length = 0.001
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ContinueIndicator:position:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0)
+}
+
+[sub_resource type="Animation" id="Animation_fcdga"]
+resource_name = "bob_indicator"
+length = 2.0
+loop_mode = 1
+step = 0.0333333
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("ContinueIndicator:position:x")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0, 0, 0, 2),
+"points": PackedFloat32Array(0, -0.016849078, -1.6666669, 0, 0, 10, -0.06088356, -8.51601, 0, 0, -0.15863879, -0.14490378, 0.22470737, 0.08794012, -0.13637184, 10, -0.047204018, -10.92276, 0.017869592, -11.49527, 0, -0.09166667, 0, 0, 0),
+"times": PackedFloat32Array(0, 0.17593202, 0.30537567, 0.61031836, 1.9792352)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_fxb7m"]
+_data = {
+&"RESET": SubResource("Animation_s4muj"),
+&"bob_indicator": SubResource("Animation_fcdga")
+}
 
 [node name="DialogueWindow" type="Control" unique_id=2018963143]
 layout_mode = 3
@@ -75,6 +114,21 @@ scale = Vector2(1e-05, 1e-05)
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control" unique_id=774864043]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/VBoxContainer" unique_id=729359250]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StatsDisplay" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/VBoxContainer" unique_id=1404619955 instance=ExtResource("2_fcdga")]
+layout_mode = 2
+
 [node name="CenterSpacerControl" type="Control" parent="PanelContainer/HBoxContainer" unique_id=1937081262]
 unique_name_in_owner = true
 layout_mode = 2
@@ -100,19 +154,48 @@ grow_vertical = 2
 [node name="Control" type="Control" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer" unique_id=783879524]
 layout_mode = 2
 
-[node name="TranscriptScrollContainer" type="ScrollContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control" unique_id=1348792555]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control" unique_id=136685871]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="TranscriptScrollContainer" type="ScrollContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer" unique_id=1348792555]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 3
 
-[node name="Transcript" type="VBoxContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/TranscriptScrollContainer" unique_id=1259676918]
+[node name="Transcript" type="VBoxContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer/TranscriptScrollContainer" unique_id=1259676918]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"TranscriptVBoxContainer"
+
+[node name="ContinueIndicatorContainer" type="Control" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer" unique_id=442310176]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer/ContinueIndicatorContainer" unique_id=1372139323]
+libraries/ = SubResource("AnimationLibrary_fxb7m")
+autoplay = &"bob_indicator"
+
+[node name="ContinueIndicator" type="TextureRect" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/VBoxContainer/ContinueIndicatorContainer" unique_id=1885482279]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -24.0
+offset_top = -24.0
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_s4muj")

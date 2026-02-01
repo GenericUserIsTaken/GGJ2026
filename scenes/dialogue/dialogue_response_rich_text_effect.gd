@@ -13,7 +13,7 @@ func _process_custom_fx(char_fx: CharFXTransform) -> bool:
 
 func _get_y(time: float) -> float:
 	var a := -4.0 * (time - 0.5) ** 2 + 1
-	var b := -4.0 * (time - sqrt(1/8.0) - 1.0) ** 2 + 0.5
-	var c := -4.0 * (time - sqrt(1/16.0) - sqrt(0.5) - 0.5) ** 2 + 0.25
+	#var b := -4.0 * (time - sqrt(1/8.0) - 1.0) ** 2 + 0.5
+	#var c := -4.0 * (time - sqrt(1/16.0) - sqrt(0.5) - 0.5) ** 2 + 0.25
 	#return maxf(maxf(maxf(a, b), c), 0.0)
 	return maxf(a, 0.0)
