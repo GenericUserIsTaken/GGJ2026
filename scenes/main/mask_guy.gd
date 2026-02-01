@@ -29,5 +29,5 @@ func animate_boss(is_happy: float) -> void:
 	if _tween:
 		_tween.kill()
 	_tween = create_tween()
-	_tween.tween_property(boss_mask_container, "rotation_degrees:y", is_happy * -65.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+	_tween.tween_property(boss_mask_container, "rotation_degrees:y", is_happy * -65.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	await _tween.finished

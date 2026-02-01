@@ -5,9 +5,9 @@
 const DialogueWindow = preload("uid://cyhfyn2ceuyef")
 
 
-var _dialogue_window: DialogueWindow
+var dialogue_window: DialogueWindow
 var guy: DialogueGuyScene:
-	get: return _dialogue_window.dialogue_mask_guy
+	get: return dialogue_window.dialogue_mask_guy
 
 ## The entry point into the dialogue interaction.
 ## [br]
@@ -25,5 +25,9 @@ func dialogue_setup() -> void:
 	pass
 
 
-func show(text: String):
-	await _dialogue_window.show_text(text)
+func show(text: String) -> void:
+	await dialogue_window.show_text(text)
+
+
+func pause(time: float) -> void:
+	await dialogue_window.get_tree().create_timer(time).timeout

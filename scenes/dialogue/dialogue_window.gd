@@ -125,7 +125,7 @@ func _input(event: InputEvent) -> void:
 func show_dialogue(dialogue: Dialogue) -> void:
 	if _tween.is_running():
 		await _tween.finished
-	dialogue._dialogue_window = self
+	dialogue.dialogue_window = self
 	dialogue.dialogue_setup()
 	active_dialog = dialogue
 	_animate(OptionsState.OPTIONS_HIDDEN)
@@ -162,6 +162,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.tween_property(_guy_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_method(_interpolate_guy, _last_guy_progress, 0.0, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.chain().tween_callback(hide)
 		OptionsState.OPTIONS_HIDDEN:
 			_tween.tween_callback(show)
@@ -269,13 +270,6 @@ func show_mask_config(target_stats: MaskStats) -> MaskParts:
 	_mask_grid.reset()
 	await _animate(OptionsState.MASK)
 	return await _mask_grid.submitted
-
-
-func make_dialogue_object(dialogue: GDScript) -> Dialogue:
-	var obj: Dialogue = dialogue.new()
-	obj._dialogue_window = self
-	add_child(obj)
-	return obj
 
 
 func _can_advance_selected_option(direction: int) -> int:
