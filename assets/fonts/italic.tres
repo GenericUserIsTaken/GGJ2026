@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" format=3 uid="uid://hgo4uvh8tgmn"]
+
+[ext_resource type="FontFile" uid="uid://cvjepnq6y5d3j" path="res://assets/fonts/AncizarSerif-Italic-VariableFont_wght.ttf" id="1_qkuem"]
+
+[resource]
+base_font = ExtResource("1_qkuem")
+variation_opentype = {
+2003265652: 600
+}

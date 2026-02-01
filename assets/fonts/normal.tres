@@ -1,0 +1,9 @@
+[gd_resource type="FontVariation" format=3 uid="uid://1nawnkbhoohl"]
+
+[ext_resource type="FontFile" uid="uid://kfqh0aym823r" path="res://assets/fonts/AncizarSerif-VariableFont_wght.ttf" id="1_u6fgu"]
+
+[resource]
+base_font = ExtResource("1_u6fgu")
+variation_opentype = {
+2003265652: 600
+}

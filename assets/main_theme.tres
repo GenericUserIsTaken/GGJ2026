@@ -1,5 +1,10 @@
 [gd_resource type="Theme" format=3 uid="uid://b4soaa4xy6ot7"]
 
+[ext_resource type="FontVariation" uid="uid://cijq57iettv1y" path="res://assets/fonts/bold.tres" id="1_611f8"]
+[ext_resource type="FontVariation" uid="uid://1nawnkbhoohl" path="res://assets/fonts/normal.tres" id="1_xgdp2"]
+[ext_resource type="FontVariation" uid="uid://b3ipt33hp304a" path="res://assets/fonts/bold_italic.tres" id="2_pefyd"]
+[ext_resource type="FontVariation" uid="uid://hgo4uvh8tgmn" path="res://assets/fonts/italic.tres" id="3_upuy7"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7ojh6"]
 draw_center = false
 border_width_left = 4
@@ -60,10 +65,10 @@ border_width_left = 4
 border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
+corner_radius_top_left = 28
+corner_radius_top_right = 28
+corner_radius_bottom_right = 28
+corner_radius_bottom_left = 28
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upuy7"]
 content_margin_left = 4.0
@@ -137,7 +142,10 @@ expand_margin_right = 4.0
 expand_margin_bottom = 4.0
 
 [resource]
+default_font = ExtResource("1_xgdp2")
 default_font_size = 24
+BoldLabel/base_type = &"Label"
+BoldLabel/fonts/font = ExtResource("1_611f8")
 Button/styles/hover = SubResource("StyleBoxFlat_7ojh6")
 Button/styles/normal = SubResource("StyleBoxFlat_2jsj3")
 Button/styles/pressed = SubResource("StyleBoxFlat_2est8")
@@ -154,6 +162,10 @@ MarginContainer/constants/margin_left = 16
 MarginContainer/constants/margin_right = 16
 MarginContainer/constants/margin_top = 16
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_64js0")
+RichTextLabel/fonts/bold_font = ExtResource("1_611f8")
+RichTextLabel/fonts/bold_italics_font = ExtResource("2_pefyd")
+RichTextLabel/fonts/italics_font = ExtResource("3_upuy7")
+RichTextLabel/fonts/normal_font = ExtResource("1_xgdp2")
 SmallLabel/base_type = &"Label"
 SmallLabel/font_sizes/font_size = 16
 StatsBar/styles/center_fill = SubResource("StyleBoxFlat_upuy7")

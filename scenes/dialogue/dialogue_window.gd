@@ -325,10 +325,11 @@ class DialogueOptionWidget extends HBoxContainer:
 	signal hovered
 	signal clicked
 
-	const ICON = preload("uid://isbqsoevkfnm")
+	const ICON = preload("uid://b3cn87iakmv1m")
 
 	var text: String
 	var icon := TextureRect.new()
+	var label := Label.new()
 	var disabled := false
 
 	func _init(_text: String) -> void:
@@ -338,7 +339,6 @@ class DialogueOptionWidget extends HBoxContainer:
 		icon.texture = ICON
 		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		add_child(icon)
-		var label := Label.new()
 		label.text = text
 		add_child(label)
 
@@ -363,7 +363,8 @@ class DialogueOptionWidget extends HBoxContainer:
 		if disabled:
 			icon.visible = false
 		else:
-			icon.visible = selected
+			icon.modulate.a = 1.0 if selected else 0.0
+			label.theme_type_variation = "BoldLabel" if selected else ""
 
 
 class DialogueTranscript extends Container:
