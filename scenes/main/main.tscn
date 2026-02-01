@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://4kiv2s2g5wau" path="res://scenes/main/beat_path.gd" id="3_6q06x"]
 [ext_resource type="PackedScene" uid="uid://mwnjbnj3k5uk" path="res://scenes/main/beat_follower.tscn" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://wf7md4prousj" path="res://scenes/main/rhythm_node.tscn" id="4_l3cfh"]
+[ext_resource type="Script" uid="uid://dd86ibocsbcoq" path="res://scenes/main/label_3d.gd" id="6_ow5a4"]
 
 [sub_resource type="Environment" id="Environment_iuonh"]
 ambient_light_source = 3
@@ -79,4 +80,13 @@ visible = false
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 13.826603, 8.730818, 21.674898)
 
+[node name="Label3D" type="Label3D" parent="." unique_id=1685458451]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.881155, 9.63261, 27.211355)
+text = "HIT 0 MISSED 0"
+font_size = 500
+script = ExtResource("6_ow5a4")
+
+[connection signal="end" from="RythmNode" to="Label3D" method="_on_rythm_node_end"]
+[connection signal="hit" from="RythmNode" to="Label3D" method="_on_rythm_node_hit"]
+[connection signal="miss" from="RythmNode" to="Label3D" method="_on_rythm_node_miss"]
 [connection signal="spawn_new_visual" from="RythmNode" to="BeatPath" method="_on_rythm_node_spawn_new_visual"]

@@ -3,6 +3,8 @@
 [ext_resource type="Script" uid="uid://p047mpywgex5" path="res://scenes/main/rhythm_node.gd" id="1_gq8q7"]
 [ext_resource type="AudioStream" uid="uid://bmlhfamfpxtxs" path="res://assets/audio/MaskSongDemo.mp3" id="2_khd62"]
 [ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="3_dhunq"]
+[ext_resource type="AudioStream" uid="uid://bo1wp4guwdbn8" path="res://MaskGame_RhythmTheme_1.wav" id="4_fcuwt"]
+[ext_resource type="AudioStream" uid="uid://c2d61u566ouue" path="res://MaskGame_RhythmTheme_2.wav" id="5_elwrd"]
 
 [node name="RythmNode" type="Node3D" unique_id=1554134677]
 script = ExtResource("1_gq8q7")
@@ -14,3 +16,9 @@ stream = ExtResource("2_khd62")
 transform = Transform3D(-1.0927847e-06, -25, 0, 25, -1.0927847e-06, 0, 0, 0, 25, 0, 0, 0.582432)
 alpha_cut = 1
 texture = ExtResource("3_dhunq")
+
+[node name="MaskGameRhythmTheme1" type="AudioStreamPlayer" parent="." unique_id=1282848769]
+stream = ExtResource("4_fcuwt")
+
+[node name="MaskGameRhythmTheme2" type="AudioStreamPlayer" parent="." unique_id=1767180881]
+stream = ExtResource("5_elwrd")
