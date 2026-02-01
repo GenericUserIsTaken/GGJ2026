@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://dwds2fsmhe00s"]
 
 [ext_resource type="Script" uid="uid://d28x6gj8wfy7s" path="res://scenes/main/main.gd" id="1_hyk8p"]
+[ext_resource type="PackedScene" uid="uid://bcq5xe77hmvi7" path="res://assets/environment/staircase5.glb" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://dko87s687x508" path="res://assets/environment/staircase4.glb" id="3_l3cfh"]
 
 [sub_resource type="Environment" id="Environment_iuonh"]
@@ -11,13 +12,18 @@ ambient_light_color = Color(0.98234254, 0.9823423, 0.9823424, 1)
 script = ExtResource("1_hyk8p")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=2095892455]
-transform = Transform3D(0.8580687, -0.3618263, 0.36441714, 0, 0.7096249, 0.7045797, -0.5135349, -0.60457784, 0.60890687, 6.125758, 18.224722, 16.873072)
+transform = Transform3D(0.8580649, -0.35673577, 0.36941066, 0, 0.7193398, 0.6946584, -0.5135413, -0.596062, 0.6172402, 6.126, 19.93, 16.873)
 environment = SubResource("Environment_iuonh")
 projection = 1
-size = 17.96
+size = 34.216
 
 [node name="CSGCylinder3D" type="CSGCylinder3D" parent="." unique_id=840010427]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.029, 15.797, 22.095)
+visible = false
 
 [node name="staircase4" parent="." unique_id=1859608303 instance=ExtResource("3_l3cfh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.330322, -11, 4.9164314)
+visible = false
+
+[node name="staircase5" parent="." unique_id=1060359476 instance=ExtResource("3_k2fmo")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.330322, -11, 4.9164314)
