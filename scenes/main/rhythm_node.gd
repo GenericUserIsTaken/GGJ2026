@@ -59,8 +59,8 @@ func _ready() -> void:
 	_timings = data
 	for row in data:
 		print(row)
-	#await get_tree().create_timer(3.0).timeout
-	#start_rhythm()
+	await get_tree().create_timer(3.0).timeout
+	start_rhythm()
 
 func start_rhythm():
 	for i in range(0, _look_ahead):
@@ -73,33 +73,37 @@ func start_rhythm():
 					j.spawned = true
 	music_player.play()
 
+var print_next_right = false
+
 func _process(delta: float) -> void:
 		_song_time = music_player.get_playback_position() + AudioServer.get_time_since_last_mix()
 		var target = get_next_target()
+		var subbeat_target = calculate_subbeat(target)
 		if active_subbeat == -1 and _song_time >= active_subbeat_start:
 			active_subbeat = last_subbeat+1
 			#print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
-			$Sprite3D.visible = true
 			#emit entered signal
-			var subbeat_target = calculate_subbeat(target)
-			if(active_subbeat +1 == subbeat_target):
-				print("next subbeat is a target! ",subbeat_target)
+			if(active_subbeat == subbeat_target):
+				print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
+				print_next_right = true
+				$Sprite3D.visible = true
+			#if(active_subbeat +1 == subbeat_target):
+				#print("next subbeat is a target! ",subbeat_target)
 		if active_subbeat != -1 and _song_time > active_subbeat_end:
 			active_subbeat = -1
 			#emit left signal
 			active_subbeat_start = next_subbeat - _margin
-			#print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+			if(print_next_right):
+				print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+				print_next_right = false
+				$Sprite3D.visible = false
 			active_subbeat_end = next_subbeat + _margin
-			$Sprite3D.visible = false
-			$Sprite3D2.visible = false
 		if _song_time >= next_subbeat:
 			last_subbeat += 1
 			#print("MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
-			$Sprite3D2.visible = true
 			#emit beat number
 			next_subbeat += _subdivision_length
-			#| | |
-			#| |x|
+
 		if _song_time >= next_measure:
 			last_measure += 1
 			next_measure += _measure_length
@@ -146,7 +150,7 @@ func get_next_target():
 	return _timings[_timing_index]
 
 func append_new_hit_time(songtime,hittype=HitTime.HitType.BEATF):
-	var newTime = HitTime.new(calc_measure(songtime), calc_subbeat(songtime), hittype, songtime)
+	var newTime = HitTime.new(calc_measure(songtime), calc_subbeat(songtime), hittype, -1 ,songtime)
 	_timings.append(newTime)
 	print(newTime)
 
@@ -162,6 +166,7 @@ func load_data_from_file(path: String) -> Array[HitTime]:
 		push_error("Failed to open file: " + path)
 		return result
 
+	var id = 0
 	while file.get_position() < file.get_length():
 		var line := file.get_line().strip_edges()
 
@@ -173,7 +178,8 @@ func load_data_from_file(path: String) -> Array[HitTime]:
 			var a = int(parts[0]) #measure
 			var b = int(parts[1]) #subbeat
 			var c = int(parts[2]) #hittype
-			var new_hit = HitTime.new(a, b, lookup[c-1])
+			var new_hit = HitTime.new(a, b, lookup[c-1],id)
+			id+=1
 			result.append(new_hit)
 			#TODO fix cursed ass function where we load a dict into memory instead of returning both
 			#measure_dict.set(a,measure_dict.get_or_add(a,[]).append(new_hit))

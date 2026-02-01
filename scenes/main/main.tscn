@@ -73,6 +73,7 @@ script = ExtResource("3_6q06x")
 
 [node name="BeatFollower" parent="BeatPath" unique_id=265675767 instance=ExtResource("3_k2fmo")]
 transform = Transform3D(-0.9999209, 0, 0.011785272, 0, 1, 0, -0.011785272, 0, -0.9999209, -10.374, 12.719, -22.325344)
+visible = false
 
 [node name="RythmNode" parent="." unique_id=1554134677 instance=ExtResource("4_l3cfh")]
 
