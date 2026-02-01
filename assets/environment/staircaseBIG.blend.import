@@ -4,12 +4,11 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://cx3lvi6cvq087"
-path="res://.godot/imported/staircaseBIG.blend-e6e8d3e0075625baef0c46ea91707947.scn"
+valid=false
 
 [deps]
 
 source_file="res://assets/environment/staircaseBIG.blend"
-dest_files=["res://.godot/imported/staircaseBIG.blend-e6e8d3e0075625baef0c46ea91707947.scn"]
 
 [params]
 
