@@ -14,7 +14,7 @@ static func get_mask_for_type(type: HitTime.HitType) -> MaskParts:
 	assert(false, "Unreachable")
 	return null
 
-func get_texture_color_for_type(type: HitTime.HitType) -> Color:
+static func get_texture_color_for_type(type: HitTime.HitType) -> Color:
 	match type:
 		HitTime.HitType.BEATF:
 			return Color.RED
