@@ -52,4 +52,4 @@ func _draw_bar(pos_sb: StyleBox, neg_sb: StyleBox, fill_amount: float) -> void:
 
 
 func _get_minimum_size() -> Vector2:
-	return Vector2(0, 48)
+	return Vector2(0, 24)

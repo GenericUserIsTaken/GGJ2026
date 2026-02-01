@@ -28,6 +28,7 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _left_top_spacer_control: Control = %LeftTopSpacerControl
 @onready var _transcript_container: PanelContainer = %TranscriptContainer
 @onready var _continue_indicator: Control = %ContinueIndicator
+@onready var _mask_vbox: VBoxContainer = %MaskGrid
 
 
 @export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
@@ -124,6 +125,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.chain().tween_callback(hide)
@@ -135,6 +137,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 		OptionsState.OPTIONS_SHOWN:
@@ -145,6 +148,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 		OptionsState.MASK:
@@ -155,6 +159,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_mask_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
 	await _tween.finished
