@@ -56,7 +56,7 @@ static func calc_songtime(measure,subbeat) -> float:
 #endregion
 
 func _ready() -> void:
-	var data = load_data_from_file("res://timedata.txt")
+	var data = load_data_from_file("res://beatmap_1.txt")
 	_timings = data
 	for row in data:
 		print(row)
@@ -179,7 +179,7 @@ func load_data_from_file(path: String) -> Array[HitTime]:
 		if parts.size() >= 3:
 			var a = int(parts[0]) #measure
 			var b = int(parts[1]) #subbeat
-			var c = int(parts[2]) #hittype
+			var c = int(parts[2])+1 #hittype, remove plus one if default at 1 and 2 instead of 0 and 1
 			var new_hit = HitTime.new(a, b, lookup[c-1],id)
 			id+=1
 			result.append(new_hit)

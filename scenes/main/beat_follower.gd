@@ -3,13 +3,15 @@ class_name BeatFollower extends PathFollow3D
 var follow_enabled := false
 static var despawn_time := 30.0 #despawn self after 30 seconds 
 static var target_dist := 67.8 #where we are supposed to be when our time comes
-static var min_dist := 0.0 #clamp min dist
+static var min_dist := 0.001 #clamp min dist
 static var max_dist := 128.21 #clamp max dist
-static var march_speed := 25.0 #speed of person
+static var march_speed := 60.0 #speed of person 25.0
+@onready var label = $Label3D
 
 func update_label():
 	$Label3D.visible = true
-	$Label3D.text = timing._to_short_string()
+	#$Label3D.text = timing._to_short_string()
+	$Label3D.text = str(calc_progress_from_time(RhythmNode._song_time))
 
 func mask_check(hitTime):
 	if(hitTime.equals(self.timing)):
@@ -36,3 +38,11 @@ func update_from_song_time(song_time):
 	self.progress = clamp(target_dist - spawn_pos, min_dist, max_dist)
 	#if ( self.progress > 66.23 and self.progress < 68.23):
 		#print("hit sub in center")
+
+func calc_progress_from_time(song_time):
+	var time_until_hit = timing.song_time - song_time
+	if time_until_hit < -despawn_time:
+		self.queue_free()
+	var march_sub_gap = march_speed * RhythmNode._subdivision_length
+	var spawn_pos = march_sub_gap * time_until_hit
+	return clamp(target_dist - spawn_pos, min_dist, max_dist)
