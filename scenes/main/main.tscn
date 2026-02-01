@@ -76,5 +76,7 @@ transform = Transform3D(-0.9999209, 0, 0.011785272, 0, 1, 0, -0.011785272, 0, -0
 visible = false
 
 [node name="RythmNode" parent="." unique_id=1554134677 instance=ExtResource("4_l3cfh")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 13.826603, 8.730818, 21.674898)
 
 [connection signal="spawn_new_visual" from="RythmNode" to="BeatPath" method="_on_rythm_node_spawn_new_visual"]

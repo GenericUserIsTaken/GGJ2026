@@ -12,6 +12,7 @@ script = ExtResource("1_djc2y")
 
 [node name="Label3D" type="Label3D" parent="." unique_id=198050151]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.3517456, 0)
+visible = false
 billboard = 1
 text = "measure, beat, hit type"
 font_size = 300

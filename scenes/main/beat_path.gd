@@ -8,8 +8,10 @@ func _on_rythm_node_spawn_new_visual(timing: Variant) -> void:
 	new_follower.timing = timing
 	new_follower.follow_enabled = true
 	new_follower.progress = 0
+	new_follower.setup_visuals()
+	%RythmNode.hit.connect(new_follower.mask_check)
 	beat_follower_count+=1
-	new_follower.update_label()
+	#new_follower.update_label()
 
 func _process(delta: float) -> void:
 	for i in self.get_children():

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://p047mpywgex5" path="res://scenes/main/rhythm_node.gd" id="1_gq8q7"]
 [ext_resource type="AudioStream" uid="uid://bmlhfamfpxtxs" path="res://assets/audio/MaskSongDemo.mp3" id="2_khd62"]
-[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="3_dhunq"]
+[ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="3_dhunq"]
 
 [node name="RythmNode" type="Node3D" unique_id=1554134677]
 script = ExtResource("1_gq8q7")
@@ -11,8 +11,6 @@ script = ExtResource("1_gq8q7")
 stream = ExtResource("2_khd62")
 
 [node name="Sprite3D" type="Sprite3D" parent="." unique_id=1938597197]
-transform = Transform3D(40, 0, 0, 0, 40, 0, 0, 0, 40, 0, 0, 0.582432)
+transform = Transform3D(-1.0927847e-06, -25, 0, 25, -1.0927847e-06, 0, 0, 0, 25, 0, 0, 0.582432)
+alpha_cut = 1
 texture = ExtResource("3_dhunq")
-
-[node name="Camera3D" type="Camera3D" parent="." unique_id=1815288848]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.727165)

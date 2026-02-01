@@ -8,7 +8,19 @@ static var max_dist := 128.21 #clamp max dist
 static var march_speed := 25.0 #speed of person
 
 func update_label():
+	$Label3D.visible = true
 	$Label3D.text = timing._to_short_string()
+
+func mask_check(hitTime):
+	if(hitTime.equals(self.timing)):
+		draw_mask()
+
+func draw_mask():
+	$MaskGuy.change_mask_vis(true)
+	
+func setup_visuals():
+	$MaskGuy.change_mask_vis(false)
+	$MaskGuy.load_visuals_from_hit_type(timing.hit_type)
 
 func update_from_song_time(song_time):
 	if(not follow_enabled):

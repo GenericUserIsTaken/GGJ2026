@@ -23,6 +23,9 @@ func _init(measure = null, subbeat = null, hit_type = null, id = -1, song_time =
 	else:
 		self.song_time = RhythmNode.calc_songtime(measure,subbeat)
 	
+func equals(other: HitTime) -> bool:
+	return self.measure == other.measure and self.subbeat == other.subbeat and self.HitType == other.HitType  
+
 func _to_short_string():	
 	return "ID {4} M {1}, S {2} HIT {0} T {3}".format([self.hit_type,self.measure,self.subbeat,self.song_time,self.id])
 

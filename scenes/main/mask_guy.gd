@@ -18,6 +18,15 @@ func load_parts(parts: MaskParts) -> void:
 		else:
 			part_sprites[part].texture = null
 
+func change_mask_vis(to : bool) -> void:
+	%MaskSprite.visible = to
+	%ForeheadSprite.visible = to
+	%EyeSprite.visible = to
+	%MouthSprite.visible = to
+	%DecorationSprite.visible = to
+
+func load_visuals_from_hit_type(type : HitTime.HitType) -> void:
+	pass
 
 func set_boss_mode(is_boss: bool) -> void:
 	boss_mask_container.visible = is_boss

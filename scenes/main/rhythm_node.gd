@@ -28,7 +28,7 @@ static var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
 @export var _measure_timings : Dictionary[int,Array] = {}
 @export var _timing_index = 0
-@export var _margin := 0.08
+@export var _margin := 0.1 #0.08 margin recomended for serious rhythm games
 
 @export var last_subbeat := 0
 @export var next_subbeat := _subdivision_length
@@ -40,6 +40,7 @@ static var _song_time := 0.0 #export to see time in editor
 @export var next_measure := _measure_length
 
 signal spawn_new_visual(timing)
+signal hit(timing)
 
 #region calc methods for conversion between songtime and measures/subbeats
 static func calc_measure(song_time) -> int:
@@ -86,7 +87,7 @@ func _process(delta: float) -> void:
 			if(active_subbeat == subbeat_target):
 				print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
 				print_next_right = true
-				$Sprite3D.visible = true
+				$Sprite3D.modulate = Color.RED
 			#if(active_subbeat +1 == subbeat_target):
 				#print("next subbeat is a target! ",subbeat_target)
 		if active_subbeat != -1 and _song_time > active_subbeat_end:
@@ -96,7 +97,7 @@ func _process(delta: float) -> void:
 			if(print_next_right):
 				print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
 				print_next_right = false
-				$Sprite3D.visible = false
+				$Sprite3D.modulate = Color.WHITE
 			active_subbeat_end = next_subbeat + _margin
 		if _song_time >= next_subbeat:
 			last_subbeat += 1
@@ -134,13 +135,14 @@ func _input(event: InputEvent) -> void:
 			#print("next subbeat target: ",subbeat_target)
 			if (subbeat_target != -1 && active_subbeat == subbeat_target):
 				print("Hit subbeat: ", active_subbeat, " with offset ", _song_time - target.song_time)
+				hit.emit(target)
 
 func calculate_subbeat(hittime : HitTime) -> int:
 	if(hittime == null):
 		return -1
 	return (hittime.measure - 1) * 8 + hittime.subbeat
 
-func get_next_target():
+func get_next_target() -> HitTime:
 	if(_timing_index >= _timings.size()):
 		return null
 	if(_song_time > _timings[_timing_index].song_time + _margin):
