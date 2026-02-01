@@ -39,4 +39,5 @@ func dialogue_end() -> void:
 	stats.loyalty = -2.0
 	stats.mental = -2.0
 	stats.physical = 2.0
-	await _dialogue_window.show_mask_config(stats)
+	var config := await _dialogue_window.show_mask_config(stats)
+	print(config)

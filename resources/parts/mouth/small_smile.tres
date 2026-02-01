@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://db0y2pir0kaa1" path="res://scripts/resources/mask_part.gd" id="1_tuwpi"]
 [ext_resource type="Script" uid="uid://ced22pm6wju3" path="res://scripts/resources/mask_stats.gd" id="2_6l16b"]
-[ext_resource type="Texture2D" uid="uid://dqmbmv5ia8ast" path="res://assets/textures/parts/mouth/SmallFrown.png" id="3_0xplc"]
+[ext_resource type="Texture2D" uid="uid://cu7yu6hhnin3p" path="res://assets/textures/parts/mouth/SmallSmile.png" id="3_tuwpi"]
 
 [sub_resource type="Resource" id="Resource_6l16b"]
 script = ExtResource("2_6l16b")
@@ -13,7 +13,7 @@ physical = 4.0
 [resource]
 script = ExtResource("1_tuwpi")
 type = 3
-texture = ExtResource("3_0xplc")
+texture = ExtResource("3_tuwpi")
 stats = SubResource("Resource_6l16b")
 name = "Small smile"
 id = "mouth/small_smile"

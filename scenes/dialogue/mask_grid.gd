@@ -66,8 +66,9 @@ func make_parts() -> void:
 		var part_container := part_containers[part.type]
 		var tile := Button.new()
 		var img := part.texture.get_image()
-		#img.resize(img.get_width() / 2, img.get_height() / 2, Image.INTERPOLATE_CUBIC)
-		#img.resize(img.get_width() * 2, img.get_height() * 2, Image.INTERPOLATE_NEAREST)
+		img.decompress()
+		img.resize(img.get_width() / 4, img.get_height() / 4, Image.INTERPOLATE_CUBIC)
+		img.resize(img.get_width() * 2, img.get_height() * 2, Image.INTERPOLATE_NEAREST)
 		tile.icon = ImageTexture.create_from_image(img)
 		tile.mouse_entered.connect(part_hovered.emit.bind(part))
 		tile.mouse_exited.connect(part_hover_exited.emit)

@@ -1,7 +1,6 @@
 [gd_scene format=4 uid="uid://bl0ix84g6lr5e"]
 
 [ext_resource type="Script" uid="uid://btom4l8tvqgdk" path="res://scenes/main/mask_guy.gd" id="1_urgd6"]
-[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="2_oywdl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1o5lm"]
 resource_name = "character"
@@ -78,7 +77,7 @@ blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_f23pm")
 
 [node name="MaskGuy" type="Node3D" unique_id=725402954]
-transform = Transform3D(0.07614739, 0, 0.99709654, 0, 1, 0, -0.99709654, 0, 0.07614739, 0, 0, 0)
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 0, 0)
 script = ExtResource("1_urgd6")
 
 [node name="Sphere" type="MeshInstance3D" parent="." unique_id=1511469058]
@@ -89,7 +88,37 @@ mesh = SubResource("ArrayMesh_5ovhg")
 transform = Transform3D(1.3122774, 0, 0, 0, 0.41144773, 0, 0, 0, 1.3122774, 0, -2.382896, 0)
 mesh = SubResource("ArrayMesh_rpruy")
 
-[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1356229466]
-transform = Transform3D(-4.4703484e-08, 0, -1, 0, 1, 0, 1, 0, -4.4703484e-08, 1.7408742, 0, -0.13294902)
-pixel_size = 0.05
-texture = ExtResource("2_oywdl")
+[node name="MaskSprite" type="Sprite3D" parent="." unique_id=1356229466]
+unique_name_in_owner = true
+transform = Transform3D(0.99999994, 0, -9.920953e-10, 0, 1, 0, 9.920953e-10, 0, 0.99999994, 0, 0, -1.367)
+pixel_size = 0.075
+alpha_cut = 1
+texture_filter = 2
+
+[node name="DecorationSprite" type="Sprite3D" parent="." unique_id=1532889747]
+unique_name_in_owner = true
+transform = Transform3D(0.9999999, 0, -9.920952e-10, 0, 1, 0, 9.920952e-10, 0, 0.9999999, 0, 0, -1.399)
+pixel_size = 0.075
+alpha_cut = 1
+texture_filter = 2
+
+[node name="ForeheadSprite" type="Sprite3D" parent="." unique_id=953381564]
+unique_name_in_owner = true
+transform = Transform3D(1.0000001, -2.8212341e-08, 9.604271e-09, 1.3027011e-15, 0.94664925, -0.32226568, 3.5527137e-15, 0.32226563, 0.94664925, 0, 0.345, -1.468)
+pixel_size = 0.075
+alpha_cut = 1
+texture_filter = 2
+
+[node name="EyeSprite" type="Sprite3D" parent="." unique_id=1513102488]
+unique_name_in_owner = true
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 3.5527137e-15, 0, 1, 0, 0.169, -1.416)
+pixel_size = 0.075
+alpha_cut = 1
+texture_filter = 2
+
+[node name="MouthSprite" type="Sprite3D" parent="." unique_id=1714359479]
+unique_name_in_owner = true
+transform = Transform3D(1.0000001, 0, 0, 0, 1, 0, 3.5527137e-15, 0, 1, 0, -0.126, -1.404)
+pixel_size = 0.075
+alpha_cut = 1
+texture_filter = 2

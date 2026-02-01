@@ -7,7 +7,6 @@ enum Type {
 	FOREHEAD,
 	EYE,
 	MOUTH,
-	DECAL,
 	DECORATION,
 }
 

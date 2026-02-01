@@ -31,7 +31,8 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _mask_vbox: VBoxContainer = %MaskGrid
 @onready var _stats_display_container: Control = %StatsDisplayContainer
 @onready var _mask_grid: MaskPartGrid = %MaskGrid
-@onready var _stats_display: StatsDisplay = %StatsDisplay
+@onready var _guy_container: SubViewportContainer = %GuyContainer
+@onready var dialogue_mask_guy: DialogueGuyScene = $GuyContainer/SubViewport/DialogueMaskGuy
 #@onready var _last_skip_timer: Timer = %LastSkipTimer
 
 
@@ -56,7 +57,6 @@ var _option_widgets: Array[DialogueOptionWidget]
 
 var _text_timer: SceneTreeTimer = null
 var _dialogue_skipped: bool = false
-var _target_stats: MaskStats = null
 
 ## Whether new dialogue is actively being shown.
 var is_dialogue_running: bool = false
@@ -82,6 +82,8 @@ func _ready() -> void:
 		_continue_indicator.animate_out()
 		await get_parent().ready
 		_fix_tree_order()
+	_left_top_spacer_control.resized.connect(func(): if not _tween or not _tween.is_running(): _interpolate_guy())
+	_center_spacer_control.resized.connect(func(): if not _tween or not _tween.is_running(): _interpolate_guy())
 
 
 func _input(event: InputEvent) -> void:
@@ -136,6 +138,7 @@ func clear_transcript() -> void:
 
 
 var _tween: Tween = null
+var _last_guy_progress: float = 0.0
 
 
 func _animate(state: OptionsState, time: float = 0.75) -> void:
@@ -156,6 +159,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_guy_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.chain().tween_callback(hide)
 		OptionsState.OPTIONS_HIDDEN:
 			_tween.tween_callback(show)
@@ -170,6 +174,8 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_guy_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_method(_interpolate_guy, _last_guy_progress, 0.0, time).set_ease(easing_type).set_trans(transition_type)
 		OptionsState.OPTIONS_SHOWN:
 			_tween.tween_callback(show)
 			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(easing_type).set_trans(transition_type)
@@ -183,6 +189,8 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "scale", Vector2.ZERO, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "modulate:a", 0.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_guy_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_method(_interpolate_guy, _last_guy_progress, 0.0, time).set_ease(easing_type).set_trans(transition_type)
 		OptionsState.MASK:
 			_tween.tween_callback(show)
 			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 2.0, time).set_ease(easing_type).set_trans(transition_type)
@@ -196,6 +204,8 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "scale", Vector2.ONE, time).set_ease(easing_type).set_trans(transition_type)
 			_tween.tween_property(_stats_display_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_property(_guy_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
+			_tween.tween_method(_interpolate_guy, _last_guy_progress, 1.0, time).set_ease(easing_type).set_trans(transition_type)
 	await _tween.finished
 
 
@@ -280,13 +290,19 @@ func _can_advance_selected_option(direction: int) -> int:
 	return i
 
 
+func _interpolate_guy(progress: float = _last_guy_progress) -> void:
+	_guy_container.position = _left_top_spacer_control.position.lerp(_center_spacer_control.position, progress)
+	_guy_container.size = _left_top_spacer_control.size.lerp(_center_spacer_control.size, progress)
+	_last_guy_progress = progress
+
+
 func _on_mask_grid_part_hovered(part: MaskPart) -> void:
 	Util.unused(part)
 
 
 func _on_mask_grid_mask_parts_changed(new_parts: MaskParts) -> void:
 	#var stats := new_parts.get_cumulative_stats()
-	Util.unused(new_parts)
+	dialogue_mask_guy.set_mask_parts(new_parts)
 
 
 func _is_any_option_available(options: Array[DialogueOption] = displayed_options) -> int:
