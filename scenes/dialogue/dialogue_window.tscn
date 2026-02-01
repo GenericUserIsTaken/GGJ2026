@@ -11,7 +11,85 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s4muj")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=556090801]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=961159396]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"EmptyMarginPanelContainer"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=556090801]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LeftSideContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=1422578171]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+theme_override_constants/separation = 0
+
+[node name="LeftTopSpacerControl" type="Control" parent="PanelContainer/HBoxContainer/LeftSideContainer" unique_id=1990626759]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.0
+
+[node name="OptionsOuterContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer" unique_id=469345931]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_type_variation = &"EmptyPanelContainer"
+
+[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer" unique_id=222677398]
+layout_mode = 2
+
+[node name="OptionsContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control" unique_id=1150770647]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer" unique_id=332314542]
+layout_mode = 2
+
+[node name="OptionsGrid" type="VBoxContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control" unique_id=157999370]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1e-05, 1e-05)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="CenterSpacerControl" type="Control" parent="PanelContainer/HBoxContainer" unique_id=1937081262]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TranscriptContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer" unique_id=237788116]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"EmptyPanelContainer"
+
+[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/TranscriptContainer" unique_id=1953119201]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control" unique_id=1299635107]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,38 +97,21 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=1422578171]
+[node name="Control" type="Control" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer" unique_id=783879524]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 1.5
 
-[node name="Control" type="Control" parent="HBoxContainer/VBoxContainer" unique_id=1990626759]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.5
-
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer" unique_id=469345931]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="OptionsGrid" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/PanelContainer" unique_id=157999370]
+[node name="TranscriptScrollContainer" type="ScrollContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control" unique_id=1348792555]
 unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="TranscriptContainer" type="PanelContainer" parent="HBoxContainer" unique_id=237788116]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="TranscriptScrollContainer" type="ScrollContainer" parent="HBoxContainer/TranscriptContainer" unique_id=1348792555]
-unique_name_in_owner = true
-layout_mode = 2
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 horizontal_scroll_mode = 3
 vertical_scroll_mode = 3
 
-[node name="Transcript" type="VBoxContainer" parent="HBoxContainer/TranscriptContainer/TranscriptScrollContainer" unique_id=1259676918]
+[node name="Transcript" type="VBoxContainer" parent="PanelContainer/HBoxContainer/TranscriptContainer/Control/PanelContainer/Control/TranscriptScrollContainer" unique_id=1259676918]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

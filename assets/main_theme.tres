@@ -1,5 +1,13 @@
 [gd_resource type="Theme" format=3 uid="uid://b4soaa4xy6ot7"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xgdp2"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_64js0"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_64js0"]
 content_margin_left = 16.0
 content_margin_top = 16.0
@@ -16,7 +24,11 @@ corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
 [resource]
-default_font_size = 45
+default_font_size = 35
+EmptyMarginPanelContainer/base_type = &"PanelContainer"
+EmptyMarginPanelContainer/styles/panel = SubResource("StyleBoxEmpty_xgdp2")
+EmptyPanelContainer/base_type = &"PanelContainer"
+EmptyPanelContainer/styles/panel = SubResource("StyleBoxEmpty_64js0")
 HBoxContainer/constants/separation = 16
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_64js0")
 TranscriptVBoxContainer/base_type = &"VBoxContainer"

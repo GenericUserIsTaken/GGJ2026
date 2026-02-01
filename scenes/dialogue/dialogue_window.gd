@@ -1,17 +1,38 @@
+@tool
 extends Control
+
+
+enum OptionsState {
+	HIDDEN,
+	OPTIONS_HIDDEN,
+	OPTIONS_SHOWN,
+	MASK,
+}
 
 
 signal dialogue_started
 signal dialogue_options_shown
-signal dialogue_advanced
+signal dialogue_advanced(option_picked: DialogueOption)
 signal dialogue_ended
 
 signal selected_option_changed(new_selected_option: int)
 
 
-@onready var _options_container: Container = %OptionsGrid
+@onready var _options_outer_container: PanelContainer = %OptionsOuterContainer
+@onready var _options_container: PanelContainer = %OptionsContainer
+@onready var _options_vbox: Container = %OptionsGrid
 @onready var _transcript: VBoxContainer = %Transcript
 @onready var _transcript_scroll_container: ScrollContainer = %TranscriptScrollContainer
+@onready var _left_side_container: VBoxContainer = %LeftSideContainer
+@onready var _center_spacer_control: Control = %CenterSpacerControl
+@onready var _left_top_spacer_control: Control = %LeftTopSpacerControl
+@onready var _transcript_container: PanelContainer = %TranscriptContainer
+
+
+@export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
+@export_tool_button("Animate to options hidden", "Tween") var animate_to_state_options_hidden := _animate.bind(OptionsState.OPTIONS_HIDDEN)
+@export_tool_button("Animate to dialogue options", "Tween") var animate_to_state_dialogue_options := _animate.bind(OptionsState.OPTIONS_SHOWN)
+@export_tool_button("Animate to mask config", "Tween") var animate_to_state_mask := _animate.bind(OptionsState.MASK)
 
 
 var selected_option: int:
@@ -25,15 +46,12 @@ var _option_widgets: Array[DialogueOptionWidget]
 ## Whether new dialogue is actively being shown.
 var is_dialogue_running: bool = false
 
-var _active_tween: Tween = null
-
 
 func _fix_tree_order() -> void:
 	get_parent().move_child(self, get_parent().get_child_count() - 1)
 
 
 func _ready() -> void:
-	hide()
 	selected_option_changed.connect(
 		func(selected: int):
 			var i := 0
@@ -41,63 +59,106 @@ func _ready() -> void:
 				option.set_selected(selected == i)
 				i += 1
 	)
-	await get_parent().ready
-	_fix_tree_order()
+	if not Engine.is_editor_hint():
+		_animate(OptionsState.HIDDEN, 0.0)
+		hide()
+		await get_parent().ready
+		_fix_tree_order()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if is_dialogue_running:
 		pass
-	elif event.is_action("ui_down") and event.is_pressed() and selected_option < displayed_options.size() - 1:
+	elif event.is_action_pressed("ui_down", true) and selected_option < displayed_options.size() - 1:
 		selected_option += 1
-	elif event.is_action("ui_up") and event.is_pressed() and selected_option > 0:
+	elif event.is_action_pressed("ui_up", true) and selected_option > 0:
 		selected_option -= 1
-	elif event.is_action("ui_accept") and event.is_pressed():
+	elif event.is_action_pressed("ui_accept", true):
 		if displayed_options.is_empty():
 			dialogue_ended.emit()
 			active_dialog = null
-			_animate_out()
+			_animate(OptionsState.HIDDEN)
 		else:
-			dialogue_advanced.emit()
-			_show_dialogue_func(displayed_options[selected_option].option_callback)
+			var option := displayed_options[selected_option]
+			dialogue_advanced.emit(option)
+			show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
+			await _animate(OptionsState.OPTIONS_HIDDEN)
+			_show_dialogue_func(option.option_callback)
 
 ## Show a [Dialogue] option.
 ## [br]
 ## This handles animating the visibility of the dialogue overlay, then starts at [param dialogue]'s [method Dialogue.dialogue] entry point.
 ## A set of options is then shown to the user once it finishes, allowing the user to choose between which of the next dialogues to show.
 func show_dialogue(dialogue: Dialogue) -> void:
+	if _tween.is_running():
+		await _tween.finished
 	dialogue._dialogue_window = self
 	active_dialog = dialogue
-	_animate_in()
+	_animate(OptionsState.OPTIONS_HIDDEN)
 	dialogue_started.emit()
 	_show_dialogue_func(dialogue.dialogue)
 
 ## Clear the _transcript view.
 ## This doesn't do any sort of animation.
-func clear__transcript() -> void:
+func clear_transcript() -> void:
 	for child in _transcript.get_children():
 		child.queue_free()
 
 
-func _animate_in() -> void:
-	if _active_tween:
-		_active_tween.kill()
-	_active_tween = create_tween()
-	show()
-	modulate.a = 0.0
-	_active_tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+var _tween: Tween = null
 
 
-func _animate_out() -> void:
-	if _active_tween:
-		_active_tween.kill()
-	_active_tween = create_tween()
-	_active_tween.tween_property(self, "modulate:a", 0.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
-	_active_tween.tween_callback(hide)
+func _animate(state: OptionsState, time: float = 0.75) -> void:
+	if _tween:
+		_tween.kill()
+	_tween = create_tween()
+	_tween.set_parallel()
+	match state:
+		OptionsState.HIDDEN:
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 0.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 0.0, time * 0.5).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.chain().tween_callback(hide)
+		OptionsState.OPTIONS_HIDDEN:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		OptionsState.OPTIONS_SHOWN:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ONE, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+		OptionsState.MASK:
+			_tween.tween_callback(show)
+			_tween.tween_property(_center_spacer_control, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_transcript_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_top_spacer_control, "size_flags_stretch_ratio", 0.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_outer_container, "size_flags_stretch_ratio", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_left_side_container, "size_flags_stretch_ratio", 1.5, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_vbox, "scale", Vector2.ZERO, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
+			_tween.tween_property(_options_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+			_tween.tween_property(_transcript_container, "modulate:a", 1.0, time).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
+	await _tween.finished
 
 
 func _show_dialogue_func(dialogue: Callable) -> void:
-	for child in _options_container.get_children():
+	for child in _options_vbox.get_children():
 		child.queue_free()
 	_option_widgets.clear()
 	displayed_options.clear()
@@ -107,17 +168,18 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 	var options: Array[DialogueOption] = await dialogue.call()
 	is_dialogue_running = false
 	displayed_options = options
-
 	var i := 0
 	for option in options:
 		var widget := DialogueOptionWidget.new(option.option_title)
-		_options_container.add_child(widget)
+		_options_vbox.add_child(widget)
 		widget.hovered.connect(func(): selected_option = i)
 		widget.clicked.connect(_show_dialogue_func.bind(option.option_callback))
 		_option_widgets.append(widget)
 		i += 1
 	selected_option = 0
 	dialogue_options_shown.emit()
+	if not displayed_options.is_empty():
+		await _animate(OptionsState.OPTIONS_SHOWN)
 
 
 var _active_scroll_tween: Tween = null
@@ -126,7 +188,7 @@ var _active_scroll_tween: Tween = null
 ## This does animate the text and scroll.
 func show_text(text: String) -> void:
 	var dialogue := DialogueTranscript.new()
-	dialogue.label.append_text(text)
+	dialogue.label.append_text("[dialogue_text start_time=\"%s\"]%s[/dialogue_text]" % [Time.get_ticks_msec(), text])
 	dialogue.label.fit_content = true
 	dialogue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_transcript.add_child(dialogue)
@@ -188,17 +250,11 @@ class DialogueTranscript extends Container:
 			queue_sort()
 
 	func _init() -> void:
+		label.install_effect(preload("dialogue_response_rich_text_effect.gd").new())
+		label.install_effect(preload("dialogue_text_rich_text_effect.gd").new())
 		label.minimum_size_changed.connect(update_minimum_size)
 		label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		add_child(label)
-
-	func _ready() -> void:
-		modulate.a = 0.0
-		x_offset = 0.0
-		var tween := create_tween()
-		tween.set_parallel(true)
-		tween.tween_property(self, "modulate:a", 1.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(self, "x_offset", 10.0, 0.75).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_EXPO)
 
 	func _get_minimum_size() -> Vector2:
 		return label.get_combined_minimum_size()

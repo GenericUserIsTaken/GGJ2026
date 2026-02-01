@@ -22,6 +22,12 @@ func dialogue() -> Array[DialogueOption]:
 	else:
 		await show("I am in a bit of a pickle")
 		await show("Would you be able to help me?")
+		await show("I am in a bit of a pickle")
+		await show("Would you be able to help me?")
+		await show("I am in a bit of a pickle")
+		await show("Would you be able to help me?")
+		await show("I am in a bit of a pickle")
+		await show("Would you be able to help me?")
 		return [
 			DialogueOption.new("Yes", _option_yes),
 			DialogueOption.new("No", _option_no),
