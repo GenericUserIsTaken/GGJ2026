@@ -1,4 +1,7 @@
-[gd_scene format=4 uid="uid://bux4gym6148iv"]
+[gd_scene format=4 uid="uid://bl0ix84g6lr5e"]
+
+[ext_resource type="Script" uid="uid://btom4l8tvqgdk" path="res://scenes/main/mask_guy.gd" id="1_urgd6"]
+[ext_resource type="Texture2D" uid="uid://isbqsoevkfnm" path="res://icon.svg" id="2_oywdl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1o5lm"]
 resource_name = "character"
@@ -76,6 +79,7 @@ shadow_mesh = SubResource("ArrayMesh_f23pm")
 
 [node name="MaskGuy" type="Node3D" unique_id=725402954]
 transform = Transform3D(0.07614739, 0, 0.99709654, 0, 1, 0, -0.99709654, 0, 0.07614739, 0, 0, 0)
+script = ExtResource("1_urgd6")
 
 [node name="Sphere" type="MeshInstance3D" parent="." unique_id=1511469058]
 transform = Transform3D(1.2808479, 0, 0, 0, 1.2808479, 0, 0, 0, 1.2808479, 0, 0, 0)
@@ -84,3 +88,8 @@ mesh = SubResource("ArrayMesh_5ovhg")
 [node name="Cube" type="MeshInstance3D" parent="Sphere" unique_id=1727099158]
 transform = Transform3D(1.3122774, 0, 0, 0, 0.41144773, 0, 0, 0, 1.3122774, 0, -2.382896, 0)
 mesh = SubResource("ArrayMesh_rpruy")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=1356229466]
+transform = Transform3D(-4.4703484e-08, 0, -1, 0, 1, 0, 1, 0, -4.4703484e-08, 1.7408742, 0, -0.13294902)
+pixel_size = 0.05
+texture = ExtResource("2_oywdl")

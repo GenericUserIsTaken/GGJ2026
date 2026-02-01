@@ -85,6 +85,8 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if Engine.is_editor_hint():
+		return
 	var next_selectable_option := _can_advance_selected_option(1)
 	var prev_selectable_option := _can_advance_selected_option(-1)
 	if is_dialogue_running:

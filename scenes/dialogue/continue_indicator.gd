@@ -1,4 +1,4 @@
-class_name ContinueIndicator extends TextureRect
+@tool class_name ContinueIndicator extends TextureRect
 
 @onready var animation_player: AnimationPlayer = $"../AnimationPlayer"
 

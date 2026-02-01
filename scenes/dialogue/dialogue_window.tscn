@@ -6,6 +6,8 @@
 [ext_resource type="Texture2D" uid="uid://br18kbaxs1jb3" path="res://assets/icons/chevron_next_48.svg" id="2_s4muj"]
 [ext_resource type="Script" uid="uid://bp4gh08jngpao" path="res://scenes/dialogue/continue_indicator.gd" id="5_x04ek"]
 
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_x04ek"]
+
 [sub_resource type="Animation" id="Animation_s4muj"]
 length = 0.001
 tracks/0/type = "bezier"
@@ -81,6 +83,29 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 1.5
 
+[node name="SubViewportContainer" type="SubViewportContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer/LeftTopSpacerControl" unique_id=986852796]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="PanelContainer/HBoxContainer/LeftSideContainer/LeftTopSpacerControl/SubViewportContainer" unique_id=421363224]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(672, 379)
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="PanelContainer/HBoxContainer/LeftSideContainer/LeftTopSpacerControl/SubViewportContainer/SubViewport" unique_id=1763944397]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PanelContainer/HBoxContainer/LeftSideContainer/LeftTopSpacerControl/SubViewportContainer/SubViewport/Node3D" unique_id=903881752]
+mesh = SubResource("CapsuleMesh_x04ek")
+
+[node name="Camera3D" type="Camera3D" parent="PanelContainer/HBoxContainer/LeftSideContainer/LeftTopSpacerControl/SubViewportContainer/SubViewport/Node3D" unique_id=1277498286]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43236578, 0.9815953)
+
 [node name="OptionsOuterContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/LeftSideContainer" unique_id=469345931]
 unique_name_in_owner = true
 layout_mode = 2
@@ -132,6 +157,29 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="PanelContainer/HBoxContainer/CenterSpacerControl" unique_id=1971767256]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="PanelContainer/HBoxContainer/CenterSpacerControl/SubViewportContainer" unique_id=2015381929]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(2, 632)
+render_target_update_mode = 4
+
+[node name="Node3D" type="Node3D" parent="PanelContainer/HBoxContainer/CenterSpacerControl/SubViewportContainer/SubViewport" unique_id=706258407]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PanelContainer/HBoxContainer/CenterSpacerControl/SubViewportContainer/SubViewport/Node3D" unique_id=1292683988]
+mesh = SubResource("CapsuleMesh_x04ek")
+
+[node name="Camera3D" type="Camera3D" parent="PanelContainer/HBoxContainer/CenterSpacerControl/SubViewportContainer/SubViewport/Node3D" unique_id=1186542020]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.169906)
 
 [node name="StatsDisplayContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer/CenterSpacerControl" unique_id=166422786]
 unique_name_in_owner = true
