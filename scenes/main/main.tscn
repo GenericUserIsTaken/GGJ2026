@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://mwnjbnj3k5uk" path="res://scenes/main/beat_follower.tscn" id="3_k2fmo"]
 [ext_resource type="PackedScene" uid="uid://wf7md4prousj" path="res://scenes/main/rhythm_node.tscn" id="4_l3cfh"]
 [ext_resource type="Script" uid="uid://dd86ibocsbcoq" path="res://scenes/main/label_3d.gd" id="6_ow5a4"]
+[ext_resource type="AudioStream" uid="uid://bo1wp4guwdbn8" path="res://MaskGame_RhythmTheme_1.wav" id="7_hujxm"]
 
 [sub_resource type="Environment" id="Environment_iuonh"]
 ambient_light_source = 3
@@ -85,6 +86,11 @@ transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, -0.8
 text = "HIT 0 MISSED 0"
 font_size = 500
 script = ExtResource("6_ow5a4")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="." unique_id=538803750]
+stream = ExtResource("7_hujxm")
+autoplay = true
+bus = &"Background music"
 
 [connection signal="end" from="RythmNode" to="Label3D" method="_on_rythm_node_end"]
 [connection signal="hit" from="RythmNode" to="Label3D" method="_on_rythm_node_hit"]

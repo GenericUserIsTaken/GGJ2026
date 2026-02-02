@@ -22,3 +22,8 @@ stream = ExtResource("4_fcuwt")
 
 [node name="MaskGameRhythmTheme2" type="AudioStreamPlayer" parent="." unique_id=1767180881]
 stream = ExtResource("5_elwrd")
+
+[node name="Background" type="AudioStreamPlayer" parent="." unique_id=2005972930]
+stream = ExtResource("4_fcuwt")
+autoplay = true
+bus = &"Background music"

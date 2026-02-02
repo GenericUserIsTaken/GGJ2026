@@ -26,6 +26,7 @@ const _look_ahead : int = 5
 @onready var music_player : AudioStreamPlayer= self.get_node("MaskSongDemo")
 @onready var music_player1 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme1")
 @onready var music_player2 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme2")
+@onready var background: AudioStreamPlayer = %Background
 static var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
 @export var _measure_timings : Dictionary[int,Array] = {}

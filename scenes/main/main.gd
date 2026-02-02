@@ -18,19 +18,22 @@ func _ready() -> void:
 	DialogueWindow.clear_transcript()
 	DialogueWindow.show_dialogue(MaskBuild1Dialogue.new())
 	await DialogueWindow.dialogue_ended
+	$AudioStreamPlayer.stream_paused = true
 
 	# TODO: Start song 1%
 	rythm_node.start_song1()
 	await rythm_node.song_end
 
 	# TODO: Start song 1
+	$AudioStreamPlayer.stream_paused = false
 	DialogueWindow.clear_transcript()
 	DialogueWindow.show_dialogue(MaskBuild2Dialogue.new())
 	await DialogueWindow.dialogue_ended
-
+	$AudioStreamPlayer.stream_paused = true
 	# TODO: Start song 2
 	rythm_node.start_song2()
 	await rythm_node.song_end
+	$AudioStreamPlayer.stream_paused = false
 	# TODO: Start song 2
 	#DialogueWindow.clear_transcript()
 	#DialogueWindow.show_dialogue(MaskBuild2Dialogue.new())
