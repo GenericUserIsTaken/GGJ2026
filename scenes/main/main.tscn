@@ -89,4 +89,5 @@ script = ExtResource("6_ow5a4")
 [connection signal="end" from="RythmNode" to="Label3D" method="_on_rythm_node_end"]
 [connection signal="hit" from="RythmNode" to="Label3D" method="_on_rythm_node_hit"]
 [connection signal="miss" from="RythmNode" to="Label3D" method="_on_rythm_node_miss"]
+[connection signal="reset" from="RythmNode" to="Label3D" method="_on_rythm_node_reset"]
 [connection signal="spawn_new_visual" from="RythmNode" to="BeatPath" method="_on_rythm_node_spawn_new_visual"]

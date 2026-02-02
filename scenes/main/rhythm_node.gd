@@ -90,6 +90,7 @@ func song_end_callback():
 
 func _ready() -> void:
 	#start_song1()
+	#start_song2()
 	pass
 
 func start_rhythm():
@@ -115,7 +116,7 @@ func _process(delta: float) -> void:
 			if(active_subbeat == subbeat_target):
 				#print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
 				print_next_right = true
-				$Sprite3D.modulate = Color.RED
+				$Sprite3D.modulate = MaskManager.get_texture_color_for_type(target.hit_type)#Color.RED
 			#if(active_subbeat +1 == subbeat_target):
 				#print("next subbeat is a target! ",subbeat_target)
 		if active_subbeat != -1 and _song_time > active_subbeat_end:

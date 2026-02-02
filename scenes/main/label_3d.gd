@@ -21,7 +21,12 @@ func reset():
 	hitnum = 0
 	missnum = 0
 	lasthit = -1
+	change_text()
 
 func _on_rythm_node_miss() -> void:
 	missnum += 1
 	change_text()
+
+
+func _on_rythm_node_reset() -> void:
+	reset()
