@@ -9,6 +9,7 @@ func set_mask_parts(mask_parts: MaskParts) -> void:
 
 
 func setup_as_boss() -> void:
+	set_mask_parts(MaskParts.new())
 	mask_guy.set_boss_mode(true)
 
 

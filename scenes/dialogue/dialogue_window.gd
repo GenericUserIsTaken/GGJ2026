@@ -210,6 +210,7 @@ func _animate(state: OptionsState, time: float = 0.75) -> void:
 			_tween.tween_property(_guy_container, "modulate:a", 1.0, time).set_ease(easing_type).set_trans(soft_transition_type)
 			_tween.tween_method(_interpolate_guy, _last_guy_progress, 1.0, time).set_ease(easing_type).set_trans(transition_type)
 	await _tween.finished
+	scroll_transcript_to_bottom()
 
 
 func _show_dialogue_func(dialogue: Callable) -> void:
@@ -251,6 +252,14 @@ func show_text(text: String) -> void:
 	dialogue.label.fit_content = true
 	dialogue.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_transcript.add_child(dialogue)
+	scroll_transcript_to_bottom()
+	if not _dialogue_skipped:
+		_text_timer = get_tree().create_timer(maxf(1.0, text.length() / 100.0))
+		await _text_timer.timeout
+		_text_timer = null
+
+
+func scroll_transcript_to_bottom() -> void:
 	get_tree().process_frame.connect(
 		func():
 			if _scroll_tween:
@@ -259,10 +268,6 @@ func show_text(text: String) -> void:
 			_scroll_tween.tween_property(_transcript_scroll_container, "scroll_vertical", _transcript.size.y - _transcript_scroll_container.size.y, 0.75).set_ease(easing_type).set_trans(transition_type),
 		CONNECT_ONE_SHOT
 	)
-	if not _dialogue_skipped:
-		_text_timer = get_tree().create_timer(1.0)
-		await _text_timer.timeout
-		_text_timer = null
 
 
 func show_player_dialogue(text: String) -> void:

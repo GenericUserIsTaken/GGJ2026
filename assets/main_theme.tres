@@ -188,5 +188,5 @@ StatsBar/styles/negative_placeholder_fill = SubResource("StyleBoxFlat_pefyd")
 StatsBar/styles/panel = SubResource("StyleBoxFlat_xgdp2")
 StatsBar/styles/placeholder_fill = SubResource("StyleBoxFlat_d80jv")
 TranscriptVBoxContainer/base_type = &"VBoxContainer"
-TranscriptVBoxContainer/constants/separation = 0
+TranscriptVBoxContainer/constants/separation = 4
 VBoxContainer/constants/separation = 16
