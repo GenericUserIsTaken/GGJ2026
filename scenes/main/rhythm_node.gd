@@ -33,8 +33,8 @@ static var _song_time := 0.0 #export to see time in editor
 @export var _timing_index = 0
 @export var _margin := 0.1 #0.08 margin recomended for serious rhythm games
 
-@export var last_subbeat := 0
-@export var next_subbeat := _subdivision_length
+@export var last_subbeat := -1
+@export var next_subbeat := 0# was _subdivision_length but changing to 0 fixes the offset, but breaks detection
 @export var active_subbeat := -1
 @export var active_subbeat_start := next_subbeat - _margin
 @export var active_subbeat_end := next_subbeat + _margin
@@ -94,7 +94,7 @@ func reset_internals():
 	_timing_index = 0
 	_margin = 0.1 #0.08 margin recomended for serious rhythm games
 	last_subbeat = 0
-	next_subbeat = _subdivision_length
+	next_subbeat = _subdivision_length #TODO change to 0
 	active_subbeat = -1
 	active_subbeat_start = next_subbeat - _margin
 	active_subbeat_end = next_subbeat + _margin
@@ -127,7 +127,7 @@ func _process(delta: float) -> void:
 		var subbeat_target = calculate_subbeat(target)
 		if active_subbeat == -1 and _song_time >= active_subbeat_start:
 			active_subbeat = last_subbeat+1
-			#print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
+			print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
 			#emit entered signal
 			if(active_subbeat == subbeat_target):
 				#print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
@@ -140,14 +140,14 @@ func _process(delta: float) -> void:
 			#emit left signal
 			active_subbeat_start = next_subbeat - _margin
 			if(print_next_right):
-				#print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+				print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
 				print_next_right = false
 				$Sprite3D.modulate = Color.WHITE
 				end.emit(last_subbeat)
 			active_subbeat_end = next_subbeat + _margin
 		if _song_time >= next_subbeat:
 			last_subbeat += 1
-			#print("MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
+			print("MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
 			#emit beat number
 			next_subbeat += _subdivision_length
 
@@ -178,7 +178,8 @@ func _input(event: InputEvent) -> void:
 			#append_new_hit_time(_songtime)
 			var target = get_next_target()
 			var subbeat_target = calculate_subbeat(target)
-			#print("next subbeat target: ",subbeat_target)
+			print("next subbeat target: ",subbeat_target)
+			print("DEBUG ",active_subbeat, " : ",subbeat_target)
 			if (subbeat_target != -1 && active_subbeat == subbeat_target):
 				print("Hit subbeat: ", active_subbeat, " with offset ", _song_time - target.song_time)
 				hit.emit(target,active_subbeat)

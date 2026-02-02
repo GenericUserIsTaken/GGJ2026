@@ -25,5 +25,3 @@ stream = ExtResource("5_elwrd")
 
 [node name="Background" type="AudioStreamPlayer" parent="." unique_id=2005972930]
 stream = ExtResource("4_fcuwt")
-autoplay = true
-bus = &"Background music"
