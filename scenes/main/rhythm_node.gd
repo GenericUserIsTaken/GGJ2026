@@ -26,7 +26,6 @@ const _look_ahead : int = 5
 @onready var music_player : AudioStreamPlayer= self.get_node("MaskSongDemo")
 @onready var music_player1 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme1")
 @onready var music_player2 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme2")
-@onready var background: AudioStreamPlayer = %Background
 static var _song_time := 0.0 #export to see time in editor
 @export var _timings : Array[HitTime] = []
 @export var _measure_timings : Dictionary[int,Array] = {}
@@ -57,7 +56,7 @@ static func calc_measure(song_time) -> int:
 	
 static func calc_subbeat(song_time) -> int:
 	var left :float = fmod(song_time,_measure_length)
-	#print(left," : ",left/_subdivision_length, " : ",_subdivision_length)
+	#print(_song_time," :: ",left," : ",left/_subdivision_length, " : ",_subdivision_length)
 	return floori(left/_subdivision_length) #have to floor to convert into int
 	
 static func calc_songtime(measure,subbeat) -> float:
@@ -69,20 +68,20 @@ func start_song1()-> void:
 	var data = load_data_from_file("res://beatmap_1.txt")
 	_timings = data
 	for row in data:
-		print(row)
+		print(_song_time," :: ",row)
 	music_player = music_player1
 	start_rhythm()
 	music_player.play()
 	music_player.finished.connect(self.song_end_callback)
 	
 func start_song2()-> void:
-	print('starting song 2')
+	print(_song_time," :: ",'starting song 2')
 	reset_internals()
 	reset.emit()
 	var data = load_data_from_file("res://beatmap_2.txt")
 	_timings = data
 	for row in data:
-		print(row)
+		print(_song_time," :: ",row)
 	music_player = music_player2
 	start_rhythm()
 	music_player.play()
@@ -115,7 +114,7 @@ func start_rhythm():
 		if(hits != null and hits.size()>0):
 			for j in hits:
 				if(not j.spawned):
-					#print("spawning ",j)
+					#print(_song_time," :: ","spawning ",j)
 					spawn_visual(j)
 					j.spawned = true
 
@@ -127,46 +126,52 @@ func _process(delta: float) -> void:
 		var subbeat_target = calculate_subbeat(target)
 		if active_subbeat == -1 and _song_time >= active_subbeat_start:
 			active_subbeat = last_subbeat+1
-			print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
+			print(_song_time," :: ","LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
 			#emit entered signal
-			if(active_subbeat == subbeat_target):
-				#print("LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
-				print_next_right = true
+			print(_song_time," :: ","LEFTTOGGLE true if ",active_subbeat+1," : ",subbeat_target, " : ", target.id)
+			if(active_subbeat+1 == subbeat_target):
+				#print(_song_time," :: ","LEFT ",_song_time,": entered subbeat ",active_subbeat, " at song time ", _song_time," at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time)," leaving at ", active_subbeat_end)
+				self.print_next_right = true
+				print(_song_time," :: ","toggle true")
 				$Sprite3D.modulate = MaskManager.get_texture_color_for_type(target.hit_type)#Color.RED
 			#if(active_subbeat +1 == subbeat_target):
-				#print("next subbeat is a target! ",subbeat_target)
+				#print(_song_time," :: ","next subbeat is a target! ",subbeat_target)
+				
+		if _song_time >= next_subbeat:
+			last_subbeat += 1
+			print(_song_time," :: ","MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
+			#emit beat number
+			next_subbeat += _subdivision_length
+		
 		if active_subbeat != -1 and _song_time > active_subbeat_end:
+			print(_song_time," :: ","RIGHTSTART ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+			print()
 			active_subbeat = -1
 			#emit left signal
 			active_subbeat_start = next_subbeat - _margin
-			if(print_next_right):
-				print("RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
-				print_next_right = false
+			if(self.print_next_right):
+				print(_song_time," :: ","RIGHT ",_song_time,": left subbeat ",last_subbeat, " at song time ", _song_time, " at calculated subbeat ", (calc_measure(_song_time)-1)*8+ calc_subbeat(_song_time), " entering next at ", active_subbeat_start)
+				self.print_next_right = false
 				$Sprite3D.modulate = Color.WHITE
 				end.emit(last_subbeat)
 			active_subbeat_end = next_subbeat + _margin
-		if _song_time >= next_subbeat:
-			last_subbeat += 1
-			print("MIDDLE ",_song_time,": entered new subbeat ",last_subbeat, " at ", _song_time, " ACTIVE SUBBEAT: ", active_subbeat)
-			#emit beat number
-			next_subbeat += _subdivision_length
 
 		if _song_time >= next_measure:
 			last_measure += 1
 			next_measure += _measure_length
-			#print("New measure: ", last_measure, " calculated measure: ", calc_measure(_song_time))
+			#print(_song_time," :: ","New measure: ", last_measure, " calculated measure: ", calc_measure(_song_time))
 			for i in range(1, _look_ahead):
 				var hits = _measure_timings.get(last_measure+i)
 				if(hits != null and hits.size()>0):
 					for j in hits:
 						if(not j.spawned):
-							#print("spawning ",j)
+							#print(_song_time," :: ","spawning ",j)
 							spawn_visual(j)
 							j.spawned = true
-					#print("Looking ahead from measure ",last_measure+1," to measure ",last_measure+_look_ahead," found hits at measure ",last_measure+i," ",hits)
+					#print(_song_time," :: ","Looking ahead from measure ",last_measure+1," to measure ",last_measure+_look_ahead," found hits at measure ",last_measure+i," ",hits)
 		
 			#if(target != null and last_measure +1 == target.measure):
-				#print("next measure is a target! ",target.measure)
+				#print(_song_time," :: ","next measure is a target! ",target.measure)
 				#load in the guys and make them tween
 
 func spawn_visual(hit_time):
@@ -178,10 +183,9 @@ func _input(event: InputEvent) -> void:
 			#append_new_hit_time(_songtime)
 			var target = get_next_target()
 			var subbeat_target = calculate_subbeat(target)
-			print("next subbeat target: ",subbeat_target)
-			print("DEBUG ",active_subbeat, " : ",subbeat_target)
+			print(_song_time," :: ","HIT DEBUG: ACTIVE SUBBEAT: ",active_subbeat, " : ",subbeat_target)
 			if (subbeat_target != -1 && active_subbeat == subbeat_target):
-				print("Hit subbeat: ", active_subbeat, " with offset ", _song_time - target.song_time)
+				print(_song_time," :: ","HIT SUCCESS subbeat: ", active_subbeat, " with offset ", _song_time - target.song_time)
 				hit.emit(target,active_subbeat)
 			else:
 				miss.emit()
@@ -196,14 +200,14 @@ func get_next_target() -> HitTime:
 		return null
 	if(_song_time > _timings[_timing_index].song_time + _margin):
 		_timing_index += 1
-		#print("new subbeat ",_timings[_timing_index])
+		print(_song_time," :: ","NEXT SUBBEAT TARGET: ",_timings[_timing_index])
 		return get_next_target()
 	return _timings[_timing_index]
 
 func append_new_hit_time(songtime,hittype=HitTime.HitType.BEATF):
 	var newTime = HitTime.new(calc_measure(songtime), calc_subbeat(songtime), hittype, -1 ,songtime)
 	_timings.append(newTime)
-	print(newTime)
+	print(_song_time," :: ",newTime)
 
 #cursed function that returns an array, but also makes a dict and saves it in the class
 #should refactor later
@@ -236,5 +240,5 @@ func load_data_from_file(path: String) -> Array[HitTime]:
 			#measure_dict.set(a,measure_dict.get_or_add(a,[]).append(new_hit))
 			measure_dict.get_or_add(a,[]).append(new_hit)
 	_measure_timings = measure_dict
-	#print(_measure_timings)
+	#print(_song_time," :: ",_measure_timings)
 	return result

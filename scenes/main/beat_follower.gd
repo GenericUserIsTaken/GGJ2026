@@ -10,8 +10,8 @@ static var march_speed := 60.0 #speed of person 25.0
 
 func update_label():
 	$Label3D.visible = true
-	#$Label3D.text = timing._to_short_string()
-	$Label3D.text = str(calc_progress_from_time(RhythmNode._song_time))
+	$Label3D.text = timing._to_short_string()
+	#$Label3D.text = str(calc_progress_from_time(RhythmNode._song_time))
 
 func mask_check(hitTime,subbeat):
 	if(hitTime.equals(self.timing)):
@@ -44,6 +44,8 @@ func update_from_song_time(song_time):
 				beat_path.gd:18 @ _process()
 
 	'''
+	if clamp(target_dist - spawn_pos, min_dist, max_dist) == 0:
+		print("WARNING 0 at ",target_dist," : ",spawn_pos," : ",min_dist," : ",max_dist," : ",)
 	self.progress = clamp(target_dist - spawn_pos, min_dist, max_dist)
 	#if ( self.progress > 66.23 and self.progress < 68.23):
 		#print("hit sub in center")
