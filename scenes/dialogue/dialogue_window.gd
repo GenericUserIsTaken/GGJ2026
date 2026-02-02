@@ -33,7 +33,7 @@ signal selected_option_changed(new_selected_option: int)
 @onready var _mask_grid: MaskPartGrid = %MaskGrid
 @onready var _guy_container: SubViewportContainer = %GuyContainer
 @onready var dialogue_mask_guy: DialogueGuyScene = $GuyContainer/SubViewport/DialogueMaskGuy
-#@onready var _last_skip_timer: Timer = %LastSkipTimer
+@onready var overlay: ColorRect = %Overlay
 
 
 @export_tool_button("Animate to hidden", "Tween") var animate_to_state_hidden := _animate.bind(OptionsState.HIDDEN)
@@ -222,7 +222,9 @@ func _show_dialogue_func(dialogue: Callable) -> void:
 
 	is_dialogue_running = true
 	_dialogue_skipped = false
-	var options: Array[DialogueOption] = await dialogue.call()
+	var options: Array[DialogueOption]
+	var untyped_options: Array = await dialogue.call()
+	options.assign(untyped_options)
 	is_dialogue_running = false
 	displayed_options = options.duplicate()
 	var i := 0
@@ -322,6 +324,21 @@ func _select_option(index: int) -> void:
 	show_text("[dialogue_response]%s[/dialogue_response]" % option.option_title)
 	await _animate(OptionsState.OPTIONS_HIDDEN)
 	_show_dialogue_func(option.option_callback)
+
+
+func animate_overlay() -> void:
+	var tween := create_tween()
+	overlay.show()
+	overlay.modulate.a = 0.0
+	tween.set_parallel()
+	tween.tween_property(overlay, "modulate:a", 1.0, 3.0)
+	var last_shake_time: PackedInt64Array = [Time.get_ticks_msec()]
+	tween.tween_method(func(value: float):
+		if Time.get_ticks_msec() - last_shake_time[0] > 20:
+			last_shake_time[0] = Time.get_ticks_msec()
+			position = Vector2(randf_range(-value, value), randf_range(-value, value))
+	, 0.0, 20.0, 3.0)
+	await tween.finished
 
 
 class DialogueOptionWidget extends HBoxContainer:

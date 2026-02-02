@@ -241,5 +241,20 @@ script = ExtResource("5_x04ek")
 [node name="LastSkipTimer" type="Timer" parent="." unique_id=1536486337]
 unique_name_in_owner = true
 
+[node name="Overlay" type="ColorRect" parent="." unique_id=1363448103]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -500.0
+offset_top = -500.0
+offset_right = 500.0
+offset_bottom = 500.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
 [connection signal="mask_parts_changed" from="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/MaskGrid" to="." method="_on_mask_grid_mask_parts_changed"]
 [connection signal="part_hovered" from="PanelContainer/HBoxContainer/LeftSideContainer/OptionsOuterContainer/Control/OptionsContainer/Control/MaskGrid" to="." method="_on_mask_grid_part_hovered"]

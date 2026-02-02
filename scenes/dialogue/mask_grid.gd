@@ -40,7 +40,7 @@ func _ready() -> void:
 	)
 	part_hover_container.modulate.a = 0.0
 	part_hover_exited.connect(animate_part_stats_display_out)
-	submit_button.pressed.connect(submitted.emit)
+	submit_button.pressed.connect(func(): submitted.emit(current_parts))
 
 
 var time := 0.0
