@@ -8,8 +8,14 @@ const MaskBuild1Dialogue = preload("uid://chqxpp1x54boe")
 
 func _ready() -> void:
 	get_tree().root.min_size = Vector2i(1280, 720)
-	pass
-	#await get_tree().create_timer(1.0).timeout
+
+	#DialogueWindow.show_dialogue(FirstDialogue.new())
+	#await DialogueWindow.dialogue_ended
+	# TODO: Start song 1
+	DialogueWindow.clear_transcript()
 	DialogueWindow.show_dialogue(MaskBuild1Dialogue.new())
-	#await get_tree().create_timer(5.0).timeout
-	#DialogueWindow.show_dialogue(TestDialogue.new())
+	await DialogueWindow.dialogue_ended
+	# TODO: Start song 2
+	DialogueWindow.clear_transcript()
+	DialogueWindow.show_dialogue(MaskBuild1Dialogue.new())
+	await DialogueWindow.dialogue_ended
