@@ -19,6 +19,7 @@ func mask_check(hitTime,subbeat):
 
 func draw_mask():
 	$MaskGuy.change_mask_vis(true)
+	$MaskGuy.darken_color(timing.hit_type)
 	
 func setup_visuals():
 	$MaskGuy.change_mask_vis(false)

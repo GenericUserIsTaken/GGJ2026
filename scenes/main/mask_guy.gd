@@ -34,6 +34,8 @@ func load_visuals_from_hit_type(type : HitTime.HitType) -> void:
 		return
 	self.load_parts(MaskManager.get_mask_for_type(type))
 	
+func darken_color(type):
+	self.change_texture_color(MaskManager.get_texture_color_for_type(type).darkened(0.3))
 
 func change_texture_color(color : Color) -> void:
 	for obj: MeshInstance3D in [sphere, cube]:
