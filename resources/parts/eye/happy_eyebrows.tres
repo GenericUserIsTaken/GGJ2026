@@ -2,18 +2,18 @@
 
 [ext_resource type="Script" uid="uid://db0y2pir0kaa1" path="res://scripts/resources/mask_part.gd" id="1_boabd"]
 [ext_resource type="Script" uid="uid://ced22pm6wju3" path="res://scripts/resources/mask_stats.gd" id="2_7xto4"]
-[ext_resource type="Texture2D" uid="uid://jspw65vkvhyn" path="res://assets/textures/parts/eye/ThirdEye.png" id="3_ckab1"]
+[ext_resource type="Texture2D" uid="uid://rxhsg84snahs" path="res://assets/textures/parts/eye/HappyEyebrows.png" id="3_boabd"]
 
 [sub_resource type="Resource" id="Resource_pkraw"]
 script = ExtResource("2_7xto4")
-loyalty = -2.0
-emotional = -1.0
+mental = 2.0
+physical = 1.0
 
 [resource]
 script = ExtResource("1_boabd")
 type = 2
-texture = ExtResource("3_ckab1")
+texture = ExtResource("3_boabd")
 stats = SubResource("Resource_pkraw")
-name = "Third eye"
-id = "eye/third_eye"
+name = "Happy eyebrows"
+id = "eye/happy_eyebrows"
 metadata/_custom_type_script = "uid://db0y2pir0kaa1"
