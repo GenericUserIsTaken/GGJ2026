@@ -75,6 +75,8 @@ func start_song1()-> void:
 	music_player.finished.connect(self.song_end_callback)
 	
 func start_song2()-> void:
+	print('starting song 2')
+	reset_internals()
 	reset.emit()
 	var data = load_data_from_file("res://beatmap_2.txt")
 	_timings = data
@@ -84,6 +86,19 @@ func start_song2()-> void:
 	start_rhythm()
 	music_player.play()
 	music_player.finished.connect(self.song_end_callback)
+
+func reset_internals():
+	_timings = []
+	_measure_timings = {}
+	_timing_index = 0
+	_margin = 0.1 #0.08 margin recomended for serious rhythm games
+	last_subbeat = 0
+	next_subbeat = _subdivision_length
+	active_subbeat = -1
+	active_subbeat_start = next_subbeat - _margin
+	active_subbeat_end = next_subbeat + _margin
+	last_measure = 1
+	next_measure = _measure_length
 
 func song_end_callback():
 	song_end.emit()

@@ -40,7 +40,7 @@ func update_from_song_time(song_time):
   <C++ Error>   Condition "p_target.is_zero_approx()" is true. Returning: Basis()
   <C++ Source>  core/math/basis.cpp:1035 @ looking_at()
   <Stack Trace> beat_follower.gd:38 @ update_from_song_time()
-                beat_path.gd:18 @ _process()
+				beat_path.gd:18 @ _process()
 
 	'''
 	self.progress = clamp(target_dist - spawn_pos, min_dist, max_dist)
