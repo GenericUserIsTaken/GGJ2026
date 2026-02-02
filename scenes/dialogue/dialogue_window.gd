@@ -112,7 +112,6 @@ func _input(event: InputEvent) -> void:
 			_continue_indicator.animate_out()
 			await active_dialog.dialogue_end()
 			dialogue_ended.emit()
-			active_dialog = null
 			_animate(OptionsState.HIDDEN)
 		elif active_dialog != null:
 			get_viewport().set_input_as_handled()
