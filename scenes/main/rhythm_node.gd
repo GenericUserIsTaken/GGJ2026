@@ -7,9 +7,11 @@ const _subdivision_length : float = 30.0/_bpm
 @onready var music_player1 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme1")
 @onready var music_player2 : AudioStreamPlayer= self.get_node("MaskGameRhythmTheme2")
 
+@onready var cursor := $Sprite3D
+
 static var _song_time := 0.0
 
-@export var _margin := 0.1 #0.08 margin recomended for serious rhythm games
+@export var _margin := 0.15 #0.08 margin recomended for serious rhythm games
 @export var _target_list : Array[HitTime] = []
 @export var _ignore_index = -1
 @export var _range_index = -1
@@ -48,13 +50,15 @@ func subbeat_offset_to_time(subbeat_offset):
 func _input(event: InputEvent) -> void:
 	if event is InputEventKey:
 		if event.pressed and (event.keycode == KEY_F or event.keycode == KEY_J):
-			print("checking hit ",_ignore_index+1, " : ",_range_index+3)
-			for i in range(_ignore_index, _range_index+3): #inclusive,exclusive
-				print(_target_list[i].in_range(_song_time, _margin))
+			var found_hit := false
+			for i in range(_ignore_index, min(_range_index+3,_target_list.size())): #inclusive,exclusive
 				if(not _target_list[i].hit and _target_list[i].in_range(_song_time, _margin)):
-					_target_list[i].hit = true
-					hit.emit(_target_list[i])
-					print("hit someone")
+					if((HitTime.HitType.BEATF == _target_list[i].hit_type and event.keycode == KEY_F) or (HitTime.HitType.BEATJ == _target_list[i].hit_type and event.keycode == KEY_J)):
+						_target_list[i].hit = true
+						hit.emit(_target_list[i])
+						found_hit = true
+			if(not found_hit):
+				miss.emit(null)
 
 
 #hit type list, ignore index to start, go until ignore index again
@@ -63,6 +67,8 @@ func _input(event: InputEvent) -> void:
 #until range_index set to target that is songtime < time - margin 
 #TODO also we shouldn't dynamically load beats, just spawn them all in at start of song
 func start_song1()-> void:
+	_ignore_index = -1
+	_range_index = -1
 	reset.emit()
 	_target_list = load_data_from_file("res://beatmap_1.txt")
 	for row in _target_list:
@@ -73,6 +79,8 @@ func start_song1()-> void:
 	music_player.finished.connect(self.song_end_callback)
 	
 func start_song2()-> void:
+	_ignore_index = -1
+	_range_index = -1
 	print(_song_time," :: ",'starting song 2')
 	reset.emit()
 	_target_list = load_data_from_file("res://beatmap_2.txt")
@@ -135,6 +143,7 @@ func _process(delta: float) -> void:
 			var next := _target_list[_ignore_index + 1]
 			if calc_songtime_for_hit(next) + _margin < _song_time:
 				_ignore_index += 1
+				cursor.modulate = Color.WHITE
 				if not next.hit:
 					miss.emit(next)
 			else:
@@ -151,7 +160,9 @@ func _process(delta: float) -> void:
 			
 		#update visual element (cursor only), by emiting all the timings that are in range, so it can figure out what color to display
 		var out = []
-		for i in range(_ignore_index+1, _range_index): #inclusive,exclusive
-				if(_target_list[i].in_range(_song_time, _margin)):
+		for i in range(_ignore_index+1, min(_range_index+3,_target_list.size())): #inclusive,exclusive
+				if(_target_list.size() > 0 and _target_list[i].in_range(_song_time, _margin)): #change the first check to started flag cuz faster
 					out.append(_target_list[i])
 		update_cursor_color.emit(out)
+		if out.size() > 0:
+			cursor.modulate = MaskManager.get_texture_color_for_type(out[0].hit_type)
