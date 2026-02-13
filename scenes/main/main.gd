@@ -10,6 +10,7 @@ const FinalDialogue = preload("uid://cqy5n2xlkvlw8")
 
 
 func _ready() -> void:
+	#$AudioStreamPlayer.play()
 	get_tree().root.min_size = Vector2i(1280, 720)
 	rythm_node.start_song1()
 	return

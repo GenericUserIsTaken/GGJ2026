@@ -12,6 +12,7 @@ enum HitType {
 @export var hit_type : HitType
 @export var spawned : bool = false
 @export var id : int
+@export var hit : bool = false
 
 func _init(measure = null, subbeat = null, hit_type = null, id = -1, song_time = null):
 	self.measure = measure
@@ -28,6 +29,11 @@ func equals(other: HitTime) -> bool:
 
 func _to_short_string():	
 	return "ID {4} M {1}, S {2} HIT {0} T {3}".format([self.hit_type,self.measure,self.subbeat,self.song_time,self.id])
+
+func in_range(songtime, margin):
+	var time = RhythmNode.calc_songtime_for_hit(self)
+	return time > songtime-margin and time < songtime+margin
+	
 
 func _to_string():
 		return "ID {4} Hit type {0}, at measure {1}, subbeat {2}, recorded song time {3}".format([self.hit_type,self.measure,self.subbeat,self.song_time,self.id])

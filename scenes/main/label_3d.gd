@@ -23,7 +23,7 @@ func reset():
 	lasthit = -1
 	change_text()
 
-func _on_rythm_node_miss() -> void:
+func _on_rythm_node_miss(_node) -> void:
 	missnum += 1
 	change_text()
 

@@ -16,3 +16,8 @@ func _on_rythm_node_spawn_new_visual(timing: Variant) -> void:
 func _process(delta: float) -> void:
 	for i in self.get_children():
 		i.update_from_song_time(RhythmNode._song_time)
+
+
+func _on_rythm_node_reset() -> void:
+	for child in self.get_children():
+		child.queue_free()

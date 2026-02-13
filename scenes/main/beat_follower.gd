@@ -13,7 +13,7 @@ func update_label():
 	$Label3D.text = timing._to_short_string()
 	#$Label3D.text = str(calc_progress_from_time(RhythmNode._song_time))
 
-func mask_check(hitTime,subbeat):
+func mask_check(hitTime):
 	if(hitTime.equals(self.timing)):
 		draw_mask()
 
